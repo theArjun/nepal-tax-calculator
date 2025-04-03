@@ -7,10 +7,50 @@
     <meta name="keywords" content="Nepal tax calculator, FY 2081-82, income tax Nepal, tax slabs, tax saving tips, social security fund">
     <meta name="author" content="Arjun Adhikari">
     <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Nepal Tax Calculator FY 2081-82">
+    <meta property="og:description" content="Calculate your Nepal income tax for fiscal year 2081-82 with this interactive calculator. Get instant tax breakdown, saving tips, and personalized recommendations.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Nepal Tax Calculator FY 2081-82">
+    <meta property="twitter:description" content="Calculate your Nepal income tax for fiscal year 2081-82 with this interactive calculator. Get instant tax breakdown, saving tips, and personalized recommendations.">
+    
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Nepal Tax Calculator",
+      "description": "Calculate your Nepal income tax for fiscal year 2081-82 with this interactive calculator. Get instant tax breakdown, saving tips, and personalized recommendations.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "NPR"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Arjun Adhikari"
+      }
+    }
+    </script>
+    
+    <!-- Canonical URL -->
+    
     <title>Nepal Tax Calculator FY 2081-82</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <meta name="theme-color" content="#4f46e5">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -122,6 +162,10 @@
         <header class="text-center mb-12">
             <h1 class="text-4xl md:text-5xl font-bold text-indigo-800 mb-3">Nepal Tax Calculator</h1>
             <p class="text-xl text-indigo-600">Fiscal Year 2081-82</p>
+            <!-- Adding SEO rich text content -->
+            <div class="mt-6 text-sm text-gray-600 max-w-3xl mx-auto">
+                <p>Use our <strong>Nepal Income Tax Calculator for FY 2081-82</strong> to accurately calculate your tax liability based on the latest tax slabs set by the Nepal Inland Revenue Department. This comprehensive calculator accounts for both individual and couple filing statuses, and includes Social Security Fund (SSF) contributions.</p>
+            </div>
         </header>
 
         <!-- Input Section -->
@@ -335,6 +379,11 @@
         <footer class="mt-12 text-center text-gray-600 text-sm">
             <p>Data based on Nepal Tax Rates for FY 2081-82</p>
             <p class="mt-1">This calculator is for informational purposes only. Always consult with a tax professional.</p>
+            
+            <!-- SEO Footer Links -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                 <p class="mt-6 text-xs">© 2023 Nepal Tax Calculator. Developed by <a href="#" class="text-indigo-600 hover:underline">Arjun Adhikari</a></p>
+            </div>
         </footer>
     </div>
 
@@ -626,6 +675,43 @@
             
             document.getElementById('recommendation').textContent = recommendation;
         }
+    </script>
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "What are the income tax slabs in Nepal for FY 2081-82?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For individuals, the first NPR 500,000 is taxed at 1% (for Social Security Tax only). The next NPR 200,000 is taxed at 10%, the next NPR 300,000 at 20%, the next NPR 1,000,000 at 30%, the next NPR 3,000,000 at 36%, and any amount above that at 39%. For couples filing jointly, the first slab extends to NPR 600,000."
+        }
+      }, {
+        "@type": "Question",
+        "name": "How can I reduce my tax liability in Nepal?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can reduce your tax liability by: 1) Contributing to the Social Security Fund (SSF) to waive the 1% Social Security Tax, 2) Deducting life insurance premiums (up to NPR 25,000), 3) Deducting health insurance premiums (up to NPR 20,000), 4) Filing taxes jointly as a couple if married, 5) Contributing to approved retirement schemes, and 6) Claiming remote work allowance if applicable."
+        }
+      }, {
+        "@type": "Question",
+        "name": "What is Social Security Fund (SSF) in Nepal?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Social Security Fund (SSF) is a government-run social security scheme in Nepal. By contributing to SSF, employees can waive the 1% Social Security Tax on their income. Employees contribute 11% of their basic salary to SSF, while employers contribute 20%. The fund provides various social security benefits including medical, accident, disability, and retirement benefits."
+        }
+      }, {
+        "@type": "Question",
+        "name": "How is the tax calculated differently for individuals versus couples in Nepal?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For individuals, the first tax-free slab is NPR 500,000, while for couples filing jointly, it extends to NPR 600,000. This means couples can save tax on an additional NPR 100,000 of income. The subsequent tax slabs are also slightly different, with couples having NPR 900,000 in the 30% bracket compared to NPR 1,000,000 for individuals."
+        }
+      }]
+    }
     </script>
 </body>
 </html>
