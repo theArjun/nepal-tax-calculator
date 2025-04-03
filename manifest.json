@@ -1,0 +1,9 @@
+{
+  "name": "Nepal Tax Calculator 2081-82",
+  "short_name": "Tax Calculator",
+  "description": "Calculate your Nepal income tax for fiscal year 2081-82",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#4f46e5"
+} 
