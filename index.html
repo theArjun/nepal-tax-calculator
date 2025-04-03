@@ -5,130 +5,383 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Calculate your Nepal income tax for FY 2081-82 with this interactive tax calculator. Supports monthly or yearly salary input, tax slab breakdown, and tax-saving tips.">
     <meta name="keywords" content="Nepal tax calculator, FY 2081-82, income tax Nepal, tax slabs, tax saving tips, social security fund">
-    <meta name="author" content="xAI">
+    <meta name="author" content="Arjun Adhikari">
     <meta name="robots" content="index, follow">
     <title>Nepal Tax Calculator FY 2081-82</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            color: #1e293b;
         }
-        .shadow-glow {
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        .container {
+            min-height: 100vh;
+            padding-bottom: 3rem;
         }
-        .hover-scale:hover {
+        .card {
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .input-field {
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+        }
+        .input-field:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        .tax-item {
+            transition: all 0.2s;
+        }
+        .tax-item:hover {
             transform: scale(1.02);
-            transition: transform 0.2s ease-in-out;
+            background-color: #eef2ff;
+        }
+        .badge {
+            border-radius: 9999px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        /* Accessibility Improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+        .switch-field {
+            display: flex;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            background-color: #e5e7eb;
+        }
+        .switch-field input {
+            position: absolute !important;
+            clip: rect(0, 0, 0, 0);
+            height: 1px;
+            width: 1px;
+            border: 0;
+            overflow: hidden;
+        }
+        .switch-field label {
+            background-color: #e5e7eb;
+            color: #4b5563;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        .switch-field input:checked + label {
+            background-color: #6366f1;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .switch-field label:hover {
+            background-color: #d1d5db;
+        }
+        .switch-field input:checked + label:hover {
+            background-color: #4f46e5;
         }
     </style>
 </head>
 <body>
-    <div class="container mx-auto p-6 max-w-5xl">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- Header -->
-        <h1 class="text-4xl font-semibold text-indigo-800 mb-8 text-center">Nepal Tax Calculator FY 2081-82</h1>
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-indigo-800 mb-3">Nepal Tax Calculator</h1>
+            <p class="text-xl text-indigo-600">Fiscal Year 2081-82</p>
+        </header>
 
         <!-- Input Section -->
-        <div class="bg-white p-6 rounded-xl shadow-glow mb-8 hover-scale">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+        <div class="card p-6 md:p-8 mb-8">
+            <h2 class="text-2xl font-semibold text-indigo-800 mb-6 flex items-center">
+                <i class="fas fa-calculator mr-3 text-indigo-600"></i>Income Details
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Salary Input -->
                 <div>
-                    <label class="block text-indigo-700 font-semibold mb-2">Salary (NPR)</label>
-                    <input type="number" id="salary" class="w-full p-3 border border-indigo-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-indigo-50" placeholder="Enter your monthly salary">
+                    <label for="salary" class="block text-indigo-700 font-medium mb-2">Salary (NPR)</label>
+                    <input type="number" id="salary" aria-describedby="salary-description" 
+                           class="w-full p-3 rounded-lg input-field focus:outline-none bg-indigo-50" 
+                           placeholder="Enter amount">
+                    <p id="salary-description" class="text-sm text-gray-500 mt-1">Gross salary before deductions</p>
                 </div>
-                <!-- Monthly/Yearly Checkbox -->
-                <div class="flex items-center space-x-2">
-                    <input type="checkbox" id="salaryToggle" class="h-5 w-5 text-indigo-600 border-indigo-300 rounded focus:ring-indigo-500">
-                    <label for="salaryToggle" class="text-indigo-700 font-semibold">Yearly</label>
+                
+                <!-- Monthly/Yearly Switch -->
+                <div>
+                    <label class="block text-indigo-700 font-medium mb-2">Income Period</label>
+                    <div class="switch-field">
+                        <input type="radio" id="monthly" name="income-period" value="monthly" checked />
+                        <label for="monthly">Monthly</label>
+                        <input type="radio" id="yearly" name="income-period" value="yearly" />
+                        <label for="yearly">Yearly</label>
+                    </div>
                 </div>
+                
                 <!-- Marital Status -->
                 <div>
-                    <label class="block text-indigo-700 font-semibold mb-2">Marital Status</label>
-                    <select id="maritalStatus" class="w-full p-3 border border-indigo-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-indigo-50">
+                    <label for="maritalStatus" class="block text-indigo-700 font-medium mb-2">Filing Status</label>
+                    <select id="maritalStatus" class="w-full p-3 rounded-lg input-field focus:outline-none bg-indigo-50">
                         <option value="individual">Individual</option>
-                        <option value="couple">Couple</option>
+                        <option value="couple">Couple (Joint)</option>
                     </select>
                 </div>
-                <!-- SSF Contribution Checkbox -->
-                <div class="flex items-center space-x-2">
-                    <input type="checkbox" id="ssf" class="h-5 w-5 text-indigo-600 border-indigo-300 rounded focus:ring-indigo-500">
-                    <label for="ssf" class="text-indigo-700 font-semibold">SSF Contribution</label>
+                
+                <!-- SSF Contribution -->
+                <div class="flex flex-col justify-center">
+                    <label for="ssf" class="block text-indigo-700 font-medium mb-2">SSF Participation</label>
+                    <div class="relative inline-block w-full h-12">
+                        <input type="checkbox" id="ssf" class="sr-only">
+                        <label for="ssf" class="flex items-center h-full cursor-pointer">
+                            <span class="relative w-12 h-7 transition bg-gray-300 rounded-full mr-3">
+                                <span class="absolute inset-y-0 left-0 w-7 h-7 bg-white rounded-full shadow transition-transform transform scale-90 duration-150"></span>
+                            </span>
+                            <span>SSF Contribution</span>
+                        </label>
+                    </div>
                 </div>
             </div>
-            <button id="calculate" class="mt-6 w-full bg-indigo-600 text-white p-3 rounded-md hover:bg-indigo-700 transition hover-scale">Calculate Your Tax</button>
+            
+            <button id="calculate" class="mt-8 w-full p-4 rounded-lg font-semibold text-white btn-primary flex items-center justify-center">
+                <i class="fas fa-calculator mr-2"></i>Calculate Your Tax
+            </button>
         </div>
 
         <!-- Results Section -->
-        <div id="results" class="bg-white rounded-xl shadow-glow hidden">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Tax Breakdown (List Group) -->
-                <div class="p-6">
-                    <h2 class="text-2xl font-semibold text-indigo-800 mb-4">Tax Breakdown</h2>
-                    <ul class="space-y-3">
-                        <li class="flex justify-between p-3 bg-indigo-50 rounded-md">
-                            <span class="text-indigo-700">Total Yearly Income</span>
-                            <span id="totalIncome" class="font-semibold text-right"></span>
+        <div id="results" class="card hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-0">
+                <!-- Tax Summary -->
+                <div class="p-6 md:p-8 col-span-2">
+                    <h2 class="text-2xl font-semibold text-indigo-800 mb-6 flex items-center">
+                        <i class="fas fa-receipt mr-3 text-indigo-600"></i>Tax Summary
+                    </h2>
+                    <ul class="space-y-4">
+                        <li class="tax-item flex justify-between p-4 rounded-lg bg-indigo-50">
+                            <span class="text-indigo-700">Total Annual Income</span>
+                            <span id="totalIncome" class="font-semibold"></span>
                         </li>
-                        <li class="flex justify-between p-3 bg-indigo-50 rounded-md">
-                            <span class="text-indigo-700">Social Security Tax (1%)</span>
-                            <span id="ssfTax" class="font-semibold text-right"></span>
+                        <li class="tax-item flex justify-between p-4 rounded-lg bg-indigo-50">
+                            <span class="text-indigo-700">Social Security Tax <span class="badge bg-blue-100 text-blue-800">1%</span></span>
+                            <span id="ssfTax" class="font-semibold"></span>
                         </li>
-                        <li class="flex justify-between p-3 bg-indigo-50 rounded-md">
+                        <li class="tax-item flex justify-between p-4 rounded-lg bg-indigo-50">
                             <span class="text-indigo-700">Income Tax</span>
-                            <span id="incomeTax" class="font-semibold text-right"></span>
+                            <span id="incomeTax" class="font-semibold"></span>
                         </li>
-                        <li class="flex justify-between p-3 bg-indigo-50 rounded-md">
-                            <span class="text-indigo-700">Total Tax Payable</span>
-                            <span id="totalTax" class="font-semibold text-red-600 text-right"></span>
+                        <li class="tax-item flex justify-between p-4 rounded-lg bg-indigo-50">
+                            <span class="text-indigo-700 font-medium">Total Tax Payable</span>
+                            <span id="totalTax" class="font-bold text-red-600"></span>
                         </li>
-                        <li class="flex justify-between p-3 bg-indigo-50 rounded-md">
-                            <span class="text-indigo-700">Net Yearly Income</span>
-                            <span id="netIncome" class="font-semibold text-green-600 text-right"></span>
+                        <li class="tax-item flex justify-between p-4 rounded-lg bg-green-50">
+                            <span class="text-green-700 font-medium">Net Annual Income</span>
+                            <span id="netIncome" class="font-bold text-green-600"></span>
                         </li>
-                        <li class="flex justify-between p-3 bg-indigo-50 rounded-md">
-                            <span class="text-indigo-700">Net Monthly Income</span>
-                            <span id="monthlyNetIncome" class="font-semibold text-green-600 text-right"></span>
+                        <li class="tax-item flex justify-between p-4 rounded-lg bg-green-50">
+                            <span class="text-green-700 font-medium">Net Monthly Income</span>
+                            <span id="monthlyNetIncome" class="font-bold text-green-600"></span>
                         </li>
                     </ul>
                 </div>
-                <!-- Chart -->
-                <div class="p-6">
-                    <canvas id="taxChart" class="w-full h-64"></canvas>
-                    <p class="text-sm text-indigo-600 text-center mt-2">Tax Distribution by Slab</p>
+                
+                <!-- Charts -->
+                <div class="p-6 md:p-8 col-span-3 bg-white">
+                    <h2 class="text-2xl font-semibold text-indigo-800 mb-6 flex items-center">
+                        <i class="fas fa-chart-pie mr-3 text-indigo-600"></i>Tax Visualization
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-medium text-indigo-700 mb-3">Tax by Slab</h3>
+                            <div class="aspect-square">
+                                <canvas id="taxChart" aria-label="Tax breakdown by slab" role="img"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-medium text-indigo-700 mb-3">Income Distribution</h3>
+                            <div class="aspect-square">
+                                <canvas id="incomeChart" aria-label="Income distribution" role="img"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <h3 class="text-lg font-medium text-indigo-700 mb-3">Tax Burden</h3>
+                        <div class="w-full h-12 bg-gray-200 rounded-full overflow-hidden">
+                            <div id="taxBurdenBar" class="h-full bg-indigo-600 text-xs font-medium text-white text-center p-4 leading-none rounded-full" style="width: 0%">
+                                0%
+                            </div>
+                        </div>
+                        <p id="taxBurdenText" class="text-sm text-gray-600 mt-2">Your effective tax rate</p>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Insights Section -->
-        <div id="insights" class="bg-white p-6 rounded-xl shadow-glow mt-8 hidden">
-            <h2 class="text-2xl font-semibold text-indigo-800 mb-4">Tax Reduction Insights</h2>
-            <ul class="list-disc pl-5 text-indigo-700 space-y-2">
-                <li><strong>Contribute to SSF:</strong> Waive the 1% Social Security Tax by joining the Social Security Fund.</li>
-                <li><strong>Life Insurance:</strong> Deduct up to NPR 25,000 by paying life insurance premiums.</li>
-                <li><strong>Health Insurance:</strong> Deduct up to NPR 20,000 with health insurance premiums.</li>
-                <li><strong>Pension Income:</strong> Get an additional 25% deduction on the first slab if you have pension income.</li>
-                <li><strong>Remote Work Allowance:</strong> Claim up to NPR 50,000 deduction if working in remote areas.</li>
-                <li><strong>Spread Income:</strong> If married, file as a couple to leverage higher initial slabs (NPR 600,000 vs. 500,000).</li>
-            </ul>
+        <div id="insights" class="card p-6 md:p-8 mt-8 hidden">
+            <h2 class="text-2xl font-semibold text-indigo-800 mb-6 flex items-center">
+                <i class="fas fa-lightbulb mr-3 text-indigo-600"></i>Tax Insights
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-medium text-indigo-700 mb-4">Tax Saving Opportunities</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <div>
+                                <strong class="text-indigo-800">SSF Contribution:</strong>
+                                <span class="text-gray-700"> Waive the 1% Social Security Tax by joining the Social Security Fund.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <div>
+                                <strong class="text-indigo-800">Life Insurance:</strong>
+                                <span class="text-gray-700"> Deduct up to NPR 25,000 by paying life insurance premiums.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <div>
+                                <strong class="text-indigo-800">Health Insurance:</strong>
+                                <span class="text-gray-700"> Deduct up to NPR 20,000 with health insurance premiums.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <div>
+                                <strong class="text-indigo-800">Pension Income:</strong>
+                                <span class="text-gray-700"> Get an additional 25% deduction on the first slab for pension income.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-medium text-indigo-700 mb-4">Tax Planning Strategies</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <div>
+                                <strong class="text-indigo-800">Remote Work Allowance:</strong>
+                                <span class="text-gray-700"> Claim up to NPR 50,000 deduction if working in remote areas.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <div>
+                                <strong class="text-indigo-800">Joint Filing:</strong>
+                                <span class="text-gray-700"> File as a couple to leverage higher initial tax slabs (NPR 600,000 vs. 500,000).</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <div>
+                                <strong class="text-indigo-800">Retirement Contributions:</strong>
+                                <span class="text-gray-700"> Contribute to approved retirement schemes for tax benefits.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <div>
+                                <strong class="text-indigo-800">Income Splitting:</strong>
+                                <span class="text-gray-700"> Consider splitting income between family members if legally possible.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="bg-indigo-50 p-4 rounded-lg mt-6" id="personalized-insight">
+                <h3 class="text-lg font-medium text-indigo-800 mb-2 flex items-center">
+                    <i class="fas fa-user-check mr-2"></i>Personalized Recommendation
+                </h3>
+                <p id="recommendation" class="text-gray-700">Calculate your tax to see personalized recommendations.</p>
+            </div>
         </div>
+        
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-600 text-sm">
+            <p>Data based on Nepal Tax Rates for FY 2081-82</p>
+            <p class="mt-1">This calculator is for informational purposes only. Always consult with a tax professional.</p>
+        </footer>
     </div>
 
     <!-- Chart.js and JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        let isMonthly = true;
-        const salaryToggle = document.getElementById('salaryToggle');
-        salaryToggle.addEventListener('change', () => {
-            isMonthly = !salaryToggle.checked; // Unchecked = Monthly, Checked = Yearly
-            document.getElementById('salary').placeholder = isMonthly ? "Enter your monthly salary" : "Enter your yearly salary";
+        // Initialize charts
+        let taxPieChart = null;
+        let incomeChart = null;
+        
+        // Toggle switch for monthly/yearly input
+        document.getElementById('monthly').addEventListener('change', function() {
+            document.getElementById('salary').placeholder = "Enter monthly salary";
+        });
+        
+        document.getElementById('yearly').addEventListener('change', function() {
+            document.getElementById('salary').placeholder = "Enter yearly salary";
+        });
+        
+        // Toggle styling for SSF switch
+        document.getElementById('ssf').addEventListener('change', function() {
+            const ssfLabel = this.nextElementSibling;
+            const ssfSwitch = ssfLabel.querySelector('span:first-child');
+            const ssfIndicator = ssfSwitch.querySelector('span');
+            
+            if (this.checked) {
+                ssfSwitch.classList.remove('bg-gray-300');
+                ssfSwitch.classList.add('bg-indigo-600');
+                ssfIndicator.classList.add('translate-x-5');
+            } else {
+                ssfSwitch.classList.remove('bg-indigo-600');
+                ssfSwitch.classList.add('bg-gray-300');
+                ssfIndicator.classList.remove('translate-x-5');
+            }
         });
 
-        document.getElementById('calculate').addEventListener('click', () => {
+        document.getElementById('calculate').addEventListener('click', function() {
             const salary = parseFloat(document.getElementById('salary').value) || 0;
+            const isMonthly = document.getElementById('monthly').checked;
             const income = isMonthly ? salary * 12 : salary;
             const maritalStatus = document.getElementById('maritalStatus').value;
             const ssf = document.getElementById('ssf').checked;
+
+            if (salary <= 0) {
+                alert("Please enter a valid salary amount.");
+                return;
+            }
 
             // Tax calculation
             let slabs = maritalStatus === 'individual' ?
@@ -136,63 +389,243 @@
                 { base: 600000, next1: 200000, next2: 300000, next3: 900000, next4: 3000000 };
 
             let ssfTax = ssf ? 0 : Math.min(slabs.base, income) * 0.01;
-            let remaining = income - slabs.base;
+            let remaining = income;
             let tax = 0;
-            const taxBreakdown = [ssfTax];
-
+            const taxBySlabs = [];
+            
+            // First Slab (0%)
+            const firstSlabAmount = Math.min(slabs.base, remaining);
+            remaining -= firstSlabAmount;
+            taxBySlabs.push({
+                name: '0% Slab',
+                amount: firstSlabAmount,
+                tax: 0,
+                rate: '0%'
+            });
+            
+            // Second Slab (10%)
             if (remaining > 0) {
-                tax += Math.min(slabs.next1, remaining) * 0.1;
-                taxBreakdown.push(Math.min(slabs.next1, remaining) * 0.1);
-                remaining -= slabs.next1;
-            } else taxBreakdown.push(0);
+                const secondSlabAmount = Math.min(slabs.next1, remaining);
+                const secondSlabTax = secondSlabAmount * 0.1;
+                tax += secondSlabTax;
+                remaining -= secondSlabAmount;
+                taxBySlabs.push({
+                    name: '10% Slab',
+                    amount: secondSlabAmount,
+                    tax: secondSlabTax,
+                    rate: '10%'
+                });
+            }
+            
+            // Third Slab (20%)
             if (remaining > 0) {
-                tax += Math.min(slabs.next2, remaining) * 0.2;
-                taxBreakdown.push(Math.min(slabs.next2, remaining) * 0.2);
-                remaining -= slabs.next2;
-            } else taxBreakdown.push(0);
+                const thirdSlabAmount = Math.min(slabs.next2, remaining);
+                const thirdSlabTax = thirdSlabAmount * 0.2;
+                tax += thirdSlabTax;
+                remaining -= thirdSlabAmount;
+                taxBySlabs.push({
+                    name: '20% Slab',
+                    amount: thirdSlabAmount,
+                    tax: thirdSlabTax,
+                    rate: '20%'
+                });
+            }
+            
+            // Fourth Slab (30%)
             if (remaining > 0) {
-                tax += Math.min(slabs.next3, remaining) * 0.3;
-                taxBreakdown.push(Math.min(slabs.next3, remaining) * 0.3);
-                remaining -= slabs.next3;
-            } else taxBreakdown.push(0);
+                const fourthSlabAmount = Math.min(slabs.next3, remaining);
+                const fourthSlabTax = fourthSlabAmount * 0.3;
+                tax += fourthSlabTax;
+                remaining -= fourthSlabAmount;
+                taxBySlabs.push({
+                    name: '30% Slab',
+                    amount: fourthSlabAmount,
+                    tax: fourthSlabTax,
+                    rate: '30%'
+                });
+            }
+            
+            // Fifth Slab (36%)
             if (remaining > 0) {
-                tax += Math.min(slabs.next4, remaining) * 0.36;
-                taxBreakdown.push(Math.min(slabs.next4, remaining) * 0.36);
-                remaining -= slabs.next4;
-            } else taxBreakdown.push(0);
+                const fifthSlabAmount = Math.min(slabs.next4, remaining);
+                const fifthSlabTax = fifthSlabAmount * 0.36;
+                tax += fifthSlabTax;
+                remaining -= fifthSlabAmount;
+                taxBySlabs.push({
+                    name: '36% Slab',
+                    amount: fifthSlabAmount,
+                    tax: fifthSlabTax,
+                    rate: '36%'
+                });
+            }
+            
+            // Sixth Slab (39%)
             if (remaining > 0) {
-                tax += remaining * 0.39;
-                taxBreakdown.push(remaining * 0.39);
-            } else taxBreakdown.push(0);
+                const sixthSlabTax = remaining * 0.39;
+                tax += sixthSlabTax;
+                taxBySlabs.push({
+                    name: '39% Slab',
+                    amount: remaining,
+                    tax: sixthSlabTax,
+                    rate: '39%'
+                });
+            }
 
             let totalTax = tax + ssfTax;
             let netIncome = income - totalTax;
             let monthlyNetIncome = netIncome / 12;
+            
+            // Calculate effective tax rate
+            const effectiveTaxRate = (totalTax / income) * 100;
 
             // Update UI
-            document.getElementById('totalIncome').textContent = income.toLocaleString() + " NPR";
-            document.getElementById('ssfTax').textContent = ssfTax.toLocaleString() + " NPR";
-            document.getElementById('incomeTax').textContent = tax.toLocaleString() + " NPR";
-            document.getElementById('totalTax').textContent = totalTax.toLocaleString() + " NPR";
-            document.getElementById('netIncome').textContent = netIncome.toLocaleString() + " NPR";
-            document.getElementById('monthlyNetIncome').textContent = monthlyNetIncome.toLocaleString(undefined, { maximumFractionDigits: 2 }) + " NPR";
+            document.getElementById('totalIncome').textContent = formatCurrency(income);
+            document.getElementById('ssfTax').textContent = formatCurrency(ssfTax);
+            document.getElementById('incomeTax').textContent = formatCurrency(tax);
+            document.getElementById('totalTax').textContent = formatCurrency(totalTax);
+            document.getElementById('netIncome').textContent = formatCurrency(netIncome);
+            document.getElementById('monthlyNetIncome').textContent = formatCurrency(monthlyNetIncome);
+            
+            // Update tax burden bar
+            const taxBurdenBar = document.getElementById('taxBurdenBar');
+            taxBurdenBar.style.width = `${effectiveTaxRate}%`;
+            taxBurdenBar.textContent = `${effectiveTaxRate.toFixed(2)}%`;
+            document.getElementById('taxBurdenText').textContent = 
+                `Your effective tax rate is ${effectiveTaxRate.toFixed(2)}% of your total income`;
+                
+            // Show results
             document.getElementById('results').classList.remove('hidden');
             document.getElementById('insights').classList.remove('hidden');
+            
+            // Generate personalized recommendations
+            generateRecommendations(income, totalTax, effectiveTaxRate, maritalStatus, ssf);
 
-            // Chart
-            const ctx = document.getElementById('taxChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
+            // Update Charts
+            updateCharts(taxBySlabs, totalTax, netIncome, ssfTax);
+        });
+        
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ne-NP', {
+                style: 'currency',
+                currency: 'NPR',
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+        
+        function updateCharts(taxBySlabs, totalTax, netIncome, ssfTax) {
+            const ctx1 = document.getElementById('taxChart').getContext('2d');
+            const ctx2 = document.getElementById('incomeChart').getContext('2d');
+            
+            // Destroy existing charts if they exist
+            if (taxPieChart) taxPieChart.destroy();
+            if (incomeChart) incomeChart.destroy();
+            
+            // Tax breakdown chart
+            const taxLabels = taxBySlabs.map(slab => `${slab.name}: ${formatCurrency(slab.tax)}`);
+            const taxData = taxBySlabs.map(slab => slab.tax);
+            if (ssfTax > 0) {
+                taxLabels.push(`SSF Tax: ${formatCurrency(ssfTax)}`);
+                taxData.push(ssfTax);
+            }
+            
+            taxPieChart = new Chart(ctx1, {
+                type: 'doughnut',
                 data: {
-                    labels: ['SSF Tax', '10% Slab', '20% Slab', '30% Slab', '36% Slab', '39% Slab'],
+                    labels: taxLabels,
                     datasets: [{
-                        data: taxBreakdown,
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+                        data: taxData,
+                        backgroundColor: [
+                            '#4338ca', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e'
+                        ],
+                        borderWidth: 1,
+                        borderColor: '#ffffff'
                     }]
                 },
-                options: { responsive: true }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const percentage = (value / totalTax * 100).toFixed(1);
+                                    return `${label} (${percentage}% of total tax)`;
+                                }
+                            }
+                        }
+                    }
+                }
             });
-        });
+            
+            // Income distribution chart
+            incomeChart = new Chart(ctx2, {
+                type: 'pie',
+                data: {
+                    labels: ['Net Income', 'Total Tax'],
+                    datasets: [{
+                        data: [netIncome, totalTax],
+                        backgroundColor: ['#10b981', '#ef4444'],
+                        borderWidth: 1,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const totalAmount = netIncome + totalTax;
+                                    const percentage = (value / totalAmount * 100).toFixed(1);
+                                    return `${label}: ${formatCurrency(value)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function generateRecommendations(income, totalTax, taxRate, maritalStatus, ssf) {
+            let recommendation = "";
+            
+            if (income < 600000) {
+                recommendation = "Your income is in the lowest tax bracket. Focus on increasing your earning potential rather than tax planning at this stage.";
+            } else if (income < 1000000) {
+                if (!ssf) {
+                    recommendation = "Consider enrolling in the Social Security Fund (SSF) to save on the 1% social security tax. Additionally, explore life and health insurance premiums for tax deductions.";
+                } else {
+                    recommendation = "Your SSF participation is already saving you money. Consider life and health insurance premium deductions for additional tax benefits.";
+                }
+            } else if (income < 2000000) {
+                if (maritalStatus === 'individual' && income > 1000000) {
+                    recommendation = "Consider filing taxes as a couple if possible, as this could save you significant tax by utilizing the higher initial tax slab (NPR 600,000 vs. 500,000).";
+                } else {
+                    recommendation = "You're in a higher tax bracket. Maximize all available deductions including life insurance, health insurance, and retirement contributions.";
+                }
+            } else {
+                recommendation = "At your income level, consider comprehensive tax planning with a professional. Explore investment options in tax-advantaged sectors and retirement planning strategies.";
+            }
+            
+            document.getElementById('recommendation').textContent = recommendation;
+        }
     </script>
 </body>
 </html>
