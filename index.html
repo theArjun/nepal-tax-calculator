@@ -33,935 +33,440 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <meta name="theme-color" content="#9c1c24">
+    <meta name="theme-color" content="#1e3a5f">
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --paper: #ede2c8;
-            --paper-dim: #e4d8b9;
-            --paper-bright: #f4ebd3;
-            --ink: #1a1410;
-            --ink-soft: #4a3e32;
-            --ink-mute: #786958;
-            --crimson: #9c1c24;
-            --crimson-deep: #6f1117;
-            --crimson-soft: #c14048;
-            --gold: #a07028;
-            --gold-soft: #c89954;
-            --sage: #5e6b48;
-            --rule: #c4b48c;
-            --rule-dim: #d8cba5;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-alt: #f1f5f9;
+            --navy: #1e3a5f;
+            --navy-deep: #15293f;
+            --blue: #2563eb;
+            --blue-strong: #1d4ed8;
+            --blue-soft: #eff6ff;
+            --ink: #0f172a;
+            --ink-soft: #334155;
+            --muted: #64748b;
+            --muted-soft: #94a3b8;
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+            --success: #059669;
+            --success-soft: #ecfdf5;
+            --danger: #dc2626;
+            --danger-soft: #fef2f2;
+            --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
         }
 
         html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
         body {
-            background: var(--paper);
+            background: var(--bg);
             color: var(--ink);
-            font-family: 'Instrument Sans', system-ui, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             font-size: 16px;
             line-height: 1.55;
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-            font-feature-settings: "ss01", "ss02", "cv11";
+            font-feature-settings: "cv11";
         }
+        .tnum { font-feature-settings: "tnum", "lnum"; font-variant-numeric: tabular-nums; }
 
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 1;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/></svg>");
-            opacity: 0.6;
-            mix-blend-mode: multiply;
+        /* App bar */
+        .appbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.18);
         }
-
-        body::after {
-            content: "";
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 1;
-            background: radial-gradient(ellipse at 50% 30%, transparent 50%, rgba(60,40,20,0.18) 100%);
-        }
-
-        .page {
-            max-width: 1240px;
+        .appbar-inner {
+            max-width: 1180px;
             margin: 0 auto;
-            padding: 2.5rem 2rem 5rem;
-            position: relative;
-            z-index: 3;
-        }
-
-        /* Top bar */
-        .topbar {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            gap: 1.5rem;
-            padding: 0.5rem 0 1.5rem;
-            border-bottom: 1px solid var(--rule);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.72rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--ink-soft);
-        }
-        .topbar .left  { justify-self: start; }
-        .topbar .center { justify-self: center; display: flex; align-items: center; gap: 0.75rem; }
-        .topbar .right { justify-self: end; }
-        .ornament {
-            width: 6px; height: 6px;
-            background: var(--crimson);
-            transform: rotate(45deg);
-        }
-
-        /* Masthead */
-        .masthead {
-            padding: 4rem 0 3rem;
-            text-align: center;
-            position: relative;
-            border-bottom: 1px double var(--rule);
-        }
-
-        .edition {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.32em;
-            text-transform: uppercase;
-            color: var(--crimson);
-            margin-bottom: 1.75rem;
-            opacity: 0;
-            animation: rise 0.7s 0.05s forwards cubic-bezier(0.2, 0.7, 0.2, 1);
-        }
-        .edition .dot {
-            display: inline-block;
-            width: 4px; height: 4px;
-            background: var(--crimson);
-            border-radius: 50%;
-            margin: 0 0.7em;
-            transform: translateY(-3px);
-        }
-
-        .wordmark {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 144, "SOFT" 30, "wght" 380;
-            font-size: clamp(3.5rem, 9.5vw, 7.5rem);
-            line-height: 0.9;
-            letter-spacing: -0.025em;
-            color: var(--ink);
-            font-style: italic;
-            opacity: 0;
-            animation: rise 0.9s 0.18s forwards cubic-bezier(0.2, 0.7, 0.2, 1);
-        }
-        .wordmark .amp {
-            font-variation-settings: "opsz" 144, "SOFT" 100, "wght" 400;
-            color: var(--crimson);
-            font-style: italic;
-            display: inline-block;
-            transform: translateY(-0.04em);
-            margin: 0 0.04em;
-        }
-        .wordmark .block {
-            display: block;
-            font-style: normal;
-            font-variation-settings: "opsz" 144, "SOFT" 30, "wght" 500;
-        }
-
-        .subwordmark {
-            margin-top: 1.5rem;
+            padding: 0.85rem 2rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-            opacity: 0;
-            animation: rise 0.7s 0.4s forwards cubic-bezier(0.2, 0.7, 0.2, 1);
+            justify-content: space-between;
+            gap: 1rem;
         }
-        .subwordmark .rule {
-            flex: 0 0 60px;
-            height: 1px;
-            background: var(--rule);
+        .brand { display: flex; align-items: center; gap: 0.75rem; }
+        .brand .logo {
+            width: 2.5rem; height: 2.5rem;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 0.625rem;
+            color: #fff;
         }
-        .subwordmark .text {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.78rem;
-            letter-spacing: 0.32em;
-            text-transform: uppercase;
-            color: var(--ink-soft);
+        .brand .name { color: #fff; font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; line-height: 1.15; }
+        .brand .sub { color: #bfdbfe; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.01em; }
+        .fy-pill {
+            border-radius: 9999px;
+            padding: 0.3rem 0.85rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            color: #dbeafe;
+            background: rgba(37, 99, 235, 0.28);
+            border: 1px solid rgba(147, 197, 253, 0.35);
             white-space: nowrap;
         }
 
-        .deck {
-            max-width: 640px;
-            margin: 2rem auto 0;
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 24, "SOFT" 50, "wght" 350;
-            font-style: italic;
-            font-size: 1.18rem;
-            line-height: 1.5;
-            color: var(--ink-soft);
-            opacity: 0;
-            animation: rise 0.8s 0.55s forwards cubic-bezier(0.2, 0.7, 0.2, 1);
-        }
-        .deck strong {
-            font-style: normal;
-            font-variation-settings: "opsz" 24, "SOFT" 50, "wght" 600;
-            color: var(--crimson);
-        }
+        .page { max-width: 1180px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
 
-        /* Section heading */
-        .section {
-            margin-top: 4rem;
-            position: relative;
+        /* Hero */
+        .hero { text-align: center; padding: 1.5rem 0 2.75rem; }
+        .hero .eyebrow {
+            font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--blue); margin-bottom: 0.85rem;
         }
-        .section-head {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: baseline;
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--rule);
+        .hero h1 {
+            font-size: clamp(2.1rem, 5vw, 3.25rem);
+            font-weight: 800; letter-spacing: -0.025em; line-height: 1.05;
+            color: var(--navy);
         }
-        .section-num {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 144, "wght" 350;
-            font-style: italic;
-            font-size: 1.5rem;
-            color: var(--crimson);
-            letter-spacing: -0.02em;
+        .hero p {
+            max-width: 640px; margin: 1.1rem auto 0;
+            color: var(--muted); font-size: 1.02rem; line-height: 1.6;
         }
-        .section-title {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 60, "SOFT" 30, "wght" 450;
-            font-size: clamp(1.6rem, 3vw, 2.25rem);
-            letter-spacing: -0.015em;
-            color: var(--ink);
+        .hero p strong { color: var(--ink-soft); font-weight: 600; }
+
+        /* Card + sections */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
         }
-        .section-meta {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--ink-mute);
+        .card-pad { padding: 1.75rem; }
+        @media (min-width: 768px) { .card-pad { padding: 2.25rem; } }
+
+        .section { margin-top: 2rem; }
+        .section-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
+        .section-head .icon {
+            width: 2rem; height: 2rem; flex: none;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 0.5rem; background: var(--blue-soft); color: var(--blue);
         }
+        .section-head h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em; color: var(--navy); }
+        .section-head .meta {
+            margin-left: auto; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
+            text-transform: uppercase; color: var(--muted-soft);
+        }
+        .subhead { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
+        .subhead h3 { font-size: 1.05rem; font-weight: 700; color: var(--navy); }
+        .subhead .meta { margin-left: auto; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted-soft); }
 
         /* Form */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
-            gap: 2rem 2.5rem;
-            margin-bottom: 2.5rem;
+            gap: 1.5rem;
         }
-        .field { position: relative; }
+        .field { display: flex; flex-direction: column; }
         .field.col-7 { grid-column: span 7; }
         .field.col-5 { grid-column: span 5; }
         .field.col-6 { grid-column: span 6; }
-        .field.col-12 { grid-column: span 12; }
 
         .field-label {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            margin-bottom: 0.85rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.68rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--ink-soft);
+            display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem;
+            margin-bottom: 0.55rem;
         }
-        .field-label .hint {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 14, "SOFT" 50, "wght" 350;
-            font-style: italic;
-            font-size: 0.85rem;
-            letter-spacing: 0;
-            text-transform: none;
-            color: var(--ink-mute);
-        }
+        .field-label .lbl { font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
+        .field-label .hint { font-size: 0.76rem; color: var(--muted-soft); font-weight: 400; }
 
-        .salary-input {
-            position: relative;
-            display: flex;
-            align-items: baseline;
-            gap: 0.65rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1.5px solid var(--ink);
-            transition: border-color 0.25s ease;
+        .amount-input {
+            display: flex; align-items: center; gap: 0.4rem;
+            border: 1px solid var(--border-strong);
+            border-radius: 0.625rem;
+            background: var(--surface);
+            padding: 0 1rem; height: 56px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        .salary-input:focus-within { border-bottom-color: var(--crimson); }
-        .salary-input .currency {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 60, "SOFT" 30, "wght" 400;
-            font-size: 2rem;
-            color: var(--ink-soft);
-            font-style: italic;
+        .amount-input:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+        .amount-input .currency { font-weight: 600; color: var(--muted); font-size: 0.95rem; }
+        .amount-input input {
+            flex: 1; min-width: 0; border: none; background: transparent; outline: none;
+            font-family: inherit; font-size: 1.5rem; font-weight: 700; color: var(--ink);
+            letter-spacing: -0.01em; font-variant-numeric: tabular-nums; padding: 0;
         }
-        .salary-input input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            outline: none;
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 144, "SOFT" 30, "wght" 380;
-            font-size: clamp(2.2rem, 4vw, 3rem);
-            color: var(--ink);
-            letter-spacing: -0.02em;
-            font-feature-settings: "tnum", "lnum";
-            min-width: 0;
-            padding: 0;
-        }
-        .salary-input input::placeholder {
-            color: var(--ink-mute);
-            opacity: 0.4;
-            font-style: italic;
-            font-variation-settings: "opsz" 144, "SOFT" 80, "wght" 350;
-        }
-        .salary-input input::-webkit-outer-spin-button,
-        .salary-input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .salary-input input[type=number] { -moz-appearance: textfield; }
+        .amount-input input::placeholder { color: var(--muted-soft); font-weight: 500; }
+        .amount-input input::-webkit-outer-spin-button,
+        .amount-input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .amount-input input[type=number] { -moz-appearance: textfield; }
 
         .segmented {
-            display: flex;
-            border: 1px solid var(--ink);
-            background: transparent;
-            border-radius: 0;
-            overflow: hidden;
-            height: 52px;
+            display: flex; height: 56px;
+            border: 1px solid var(--border-strong);
+            border-radius: 0.625rem; background: var(--surface-alt);
+            padding: 4px; gap: 4px;
         }
         .segmented input { position: absolute; opacity: 0; pointer-events: none; }
         .segmented label {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 1.25rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.72rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--ink-soft);
-            cursor: pointer;
-            background: transparent;
-            transition: background 0.2s ease, color 0.2s ease;
-            border-right: 1px solid var(--ink);
-            user-select: none;
-            position: relative;
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            border-radius: 0.45rem; cursor: pointer; user-select: none;
+            font-size: 0.85rem; font-weight: 600; color: var(--muted);
+            transition: all 0.18s ease;
         }
-        .segmented label:last-of-type { border-right: none; }
-        .segmented label:hover { background: rgba(26, 20, 16, 0.04); }
-        .segmented input:checked + label {
-            background: var(--ink);
-            color: var(--paper-bright);
-        }
-        .segmented input:focus-visible + label {
-            outline: 2px solid var(--crimson);
-            outline-offset: -4px;
-        }
+        .segmented label:hover { color: var(--ink-soft); }
+        .segmented input:checked + label { background: var(--navy); color: #fff; box-shadow: var(--shadow-sm); }
+        .segmented input:focus-visible + label { outline: 2px solid var(--blue); outline-offset: 2px; }
 
         .ssf-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.25rem;
-            height: 52px;
-            border: 1px solid var(--ink);
-            cursor: pointer;
-            user-select: none;
-            transition: background 0.25s ease;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 56px; padding: 0 1rem;
+            border: 1px solid var(--border-strong); border-radius: 0.625rem;
+            background: var(--surface); cursor: pointer; user-select: none;
+            transition: border-color 0.2s ease, background 0.2s ease;
         }
-        .ssf-toggle:hover { background: rgba(26, 20, 16, 0.04); }
+        .ssf-toggle:hover { border-color: var(--muted-soft); }
+        .ssf-toggle.is-on { border-color: var(--blue); background: var(--blue-soft); }
         .ssf-toggle input { position: absolute; opacity: 0; pointer-events: none; }
-        .ssf-toggle .label-text {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.72rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--ink-soft);
-        }
-        .ssf-toggle .state {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 14, "SOFT" 50, "wght" 400;
-            font-style: italic;
-            font-size: 0.95rem;
-            color: var(--ink-mute);
-            transition: color 0.25s ease;
-        }
+        .ssf-toggle .label-text { font-size: 0.85rem; font-weight: 600; color: var(--ink-soft); }
+        .ssf-toggle .state { font-size: 0.8rem; font-weight: 500; color: var(--muted); transition: color 0.2s ease; }
+        .ssf-toggle.is-on .state { color: var(--blue); font-weight: 600; }
         .ssf-toggle .knob {
-            display: inline-block;
-            width: 40px;
-            height: 20px;
-            background: var(--rule);
-            position: relative;
-            margin-left: 0.85rem;
-            transition: background 0.25s ease;
+            display: inline-block; width: 42px; height: 24px; border-radius: 9999px;
+            background: var(--border-strong); position: relative; margin-left: 0.75rem; transition: background 0.2s ease;
         }
         .ssf-toggle .knob::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 2px;
-            transform: translateY(-50%);
-            width: 16px;
-            height: 16px;
-            background: var(--paper-bright);
-            transition: left 0.25s cubic-bezier(0.3, 0.8, 0.4, 1);
+            content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px;
+            background: #fff; border-radius: 50%; box-shadow: var(--shadow-sm);
+            transition: left 0.22s cubic-bezier(0.3,0.8,0.4,1);
         }
-        .ssf-toggle.is-on .knob { background: var(--crimson); }
-        .ssf-toggle.is-on .knob::after { left: 22px; }
-        .ssf-toggle.is-on .state { color: var(--crimson); }
+        .ssf-toggle.is-on .knob { background: var(--blue); }
+        .ssf-toggle.is-on .knob::after { left: 21px; }
 
-        .calculate-bar {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            align-items: center;
-            gap: 2rem;
-            margin-top: 1rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--rule);
+        .calc-row {
+            display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+            margin-top: 1.75rem; padding-top: 1.75rem; border-top: 1px solid var(--border);
         }
-        .calculate-note {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 18, "SOFT" 50, "wght" 350;
-            font-style: italic;
-            font-size: 1.05rem;
-            color: var(--ink-soft);
-            line-height: 1.45;
-        }
+        .calc-note { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
         .btn {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.78rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            padding: 1.25rem 2.5rem;
-            background: var(--crimson);
-            color: var(--paper-bright);
-            border: none;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: background 0.25s ease, transform 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 1rem;
-            white-space: nowrap;
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            font-family: inherit; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.01em;
+            padding: 0.95rem 1.75rem; border-radius: 0.625rem; border: none; cursor: pointer;
+            background: var(--navy); color: #fff; white-space: nowrap;
+            transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
         }
-        .btn:hover { background: var(--crimson-deep); }
-        .btn:active { transform: translateY(1px); }
-        .btn::after {
-            content: "";
-            display: inline-block;
-            width: 14px; height: 10px;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 10'><path d='M1 5h12M9 1l4 4-4 4' stroke='%23f4ebd3' stroke-width='1.4' fill='none' stroke-linecap='square'/></svg>");
-            background-size: contain;
-            background-repeat: no-repeat;
-            transform: translateX(0);
-            transition: transform 0.25s ease;
+        .btn:hover { background: var(--navy-deep); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(30,58,95,0.28); }
+        .btn:active { transform: translateY(0); }
+        .btn svg { transition: transform 0.2s ease; }
+        .btn:hover svg { transform: translateX(3px); }
+        .btn-ghost {
+            background: var(--surface); color: var(--navy); border: 1px solid var(--border);
+            font-size: 0.82rem; padding: 0.6rem 1rem;
         }
-        .btn:hover::after { transform: translateX(4px); }
+        .btn-ghost:hover { background: var(--blue-soft); border-color: var(--blue); color: var(--blue); transform: none; box-shadow: none; }
 
         /* Results */
-        .results { display: none; }
-        .results.is-visible { display: block; animation: rise 0.6s forwards cubic-bezier(0.2, 0.7, 0.2, 1); }
+        .results, .insights { display: none; }
+        .results.is-visible, .insights.is-visible { display: block; animation: rise 0.5s forwards cubic-bezier(0.2,0.7,0.2,1); }
 
-        .verdict {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 3rem;
-            align-items: stretch;
-            margin-bottom: 4rem;
+        .kpi-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;
         }
+        .kpi {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 0.875rem;
+            padding: 1.25rem; box-shadow: var(--shadow-sm); border-top: 3px solid var(--navy);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .kpi:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(15,23,42,0.09); }
+        .kpi.accent-danger  { border-top-color: var(--danger); }
+        .kpi.accent-success { border-top-color: var(--success); }
+        .kpi.accent-blue    { border-top-color: var(--blue); }
+        .kpi .k-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+        .kpi .k-value { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.02em; margin-top: 0.4rem; color: var(--ink); }
+        .kpi.accent-danger .k-value  { color: var(--danger); }
+        .kpi.accent-success .k-value { color: var(--success); }
+        .kpi.accent-blue .k-value    { color: var(--blue); }
+        .kpi .k-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.45rem; }
+        .npr-mark { font-size: 0.62em; font-weight: 600; color: var(--muted); margin-right: 0.18em; vertical-align: 0.08em; }
 
-        .verdict-amount {
-            position: relative;
-            padding: 2.5rem 0 2rem;
-        }
-        .verdict-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.32em;
-            text-transform: uppercase;
-            color: var(--ink-soft);
-            margin-bottom: 1rem;
-        }
-        .verdict-label .marker {
-            display: inline-block;
-            width: 28px;
-            height: 1px;
-            background: var(--crimson);
-            vertical-align: middle;
-            margin-right: 0.85rem;
-        }
-        .verdict-figure {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 144, "SOFT" 30, "wght" 400;
-            font-size: clamp(3.5rem, 8vw, 6rem);
-            line-height: 0.95;
-            color: var(--ink);
-            letter-spacing: -0.035em;
-            font-feature-settings: "tnum", "lnum";
-        }
-        .verdict-figure .npr {
-            font-variation-settings: "opsz" 144, "SOFT" 50, "wght" 350;
-            font-style: italic;
-            font-size: 0.45em;
-            color: var(--crimson);
-            margin-right: 0.2em;
-            vertical-align: 0.35em;
-        }
-        .verdict-meta {
-            margin-top: 1.5rem;
-            display: flex;
-            align-items: baseline;
-            gap: 1.5rem;
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 18, "SOFT" 50, "wght" 350;
-            font-style: italic;
-            font-size: 1.1rem;
-            color: var(--ink-soft);
-        }
-        .verdict-meta .pill {
-            font-family: 'JetBrains Mono', monospace;
-            font-style: normal;
-            font-size: 0.7rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            padding: 0.35rem 0.75rem;
-            background: var(--ink);
-            color: var(--paper-bright);
-        }
+        /* Summary breakdown strip */
+        .summary-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+        .summary-strip .item { padding: 1.1rem 1.25rem; border-right: 1px solid var(--border); }
+        .summary-strip .item:last-child { border-right: none; }
+        .summary-strip .s-label { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+        .summary-strip .s-value { font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-top: 0.25rem; font-variant-numeric: tabular-nums; }
 
-        .verdict-aside {
-            background: var(--ink);
-            color: var(--paper-bright);
-            padding: 2rem 2.25rem;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .verdict-aside::before {
-            content: "";
-            position: absolute;
-            top: 1rem; right: 1rem;
-            width: 8px; height: 8px;
-            background: var(--crimson-soft);
-            border-radius: 50%;
-        }
-        .aside-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            color: var(--paper-dim);
-            opacity: 0.7;
-        }
-        .aside-figure {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 60, "SOFT" 30, "wght" 380;
-            font-size: clamp(2rem, 4vw, 3rem);
-            line-height: 1;
-            margin-top: 1rem;
-            letter-spacing: -0.02em;
-            font-feature-settings: "tnum", "lnum";
-        }
-        .aside-figure .npr {
-            font-style: italic;
-            color: var(--crimson-soft);
-            font-size: 0.55em;
-            font-variation-settings: "opsz" 60, "SOFT" 50, "wght" 350;
-            margin-right: 0.2em;
-        }
-        .aside-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            padding: 0.85rem 0;
-            border-top: 1px solid rgba(244, 235, 211, 0.16);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--paper-dim);
-        }
-        .aside-row:first-of-type { margin-top: 2rem; }
-        .aside-row .v { color: var(--paper-bright); font-feature-settings: "tnum"; }
-
-        /* Ledger Table */
-        .ledger { margin-bottom: 4rem; }
-        .ledger-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.92rem;
-        }
+        /* Ledger table */
+        .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 0.75rem; }
+        .ledger-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         .ledger-table thead th {
-            text-align: left;
-            padding: 0 0 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.68rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--ink-mute);
-            font-weight: 500;
-            border-bottom: 1px solid var(--rule);
+            text-align: left; padding: 0.85rem 1.1rem; background: var(--surface-alt);
+            font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+            color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap;
         }
         .ledger-table thead th.num { text-align: right; }
-        .ledger-table tbody td {
-            padding: 1.1rem 0;
-            border-bottom: 1px dotted var(--rule);
-            font-feature-settings: "tnum", "lnum";
-            color: var(--ink);
+        .ledger-table tbody td { padding: 0.85rem 1.1rem; border-bottom: 1px solid #f1f5f9; color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+        .ledger-table tbody td.num { text-align: right; font-weight: 600; color: var(--ink); }
+        .ledger-table tbody tr:hover { background: #f8fafc; }
+        .rate-chip {
+            display: inline-flex; align-items: center; justify-content: center; min-width: 46px;
+            padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.74rem; font-weight: 600;
+            background: var(--blue-soft); color: var(--blue);
         }
-        .ledger-table tbody td.num { text-align: right; }
-        .ledger-table tbody tr:last-child td { border-bottom: none; }
-        .ledger-table .slab-name {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .ledger-table .rate-chip {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 44px;
-            padding: 0.2rem 0.55rem;
-            font-size: 0.7rem;
-            font-weight: 500;
-            background: var(--paper-dim);
-            color: var(--ink);
-            letter-spacing: 0.05em;
-        }
-        .ledger-table .rate-chip[data-rate="10"] { background: #f0d9a8; color: var(--ink); }
-        .ledger-table .rate-chip[data-rate="20"] { background: var(--gold-soft); color: var(--ink); }
-        .ledger-table .rate-chip[data-rate="30"] { background: var(--crimson-soft); color: var(--paper-bright); }
-        .ledger-table .rate-chip[data-rate="36"] { background: var(--crimson); color: var(--paper-bright); }
-        .ledger-table .rate-chip[data-rate="39"] { background: var(--crimson-deep); color: var(--paper-bright); }
-        .ledger-table .rate-chip[data-rate="ssf"] { background: var(--sage); color: var(--paper-bright); }
+        .rate-chip[data-rate="0"]   { background: #f1f5f9; color: var(--muted); }
+        .rate-chip[data-rate="10"]  { background: #dbeafe; color: #1d4ed8; }
+        .rate-chip[data-rate="20"]  { background: #bfdbfe; color: #1e40af; }
+        .rate-chip[data-rate="30"]  { background: #93c5fd; color: #1e3a8a; }
+        .rate-chip[data-rate="36"]  { background: var(--navy); color: #fff; }
+        .rate-chip[data-rate="39"]  { background: var(--navy-deep); color: #fff; }
+        .rate-chip[data-rate="ssf"] { background: var(--success-soft); color: var(--success); }
         .ledger-table tfoot td {
-            padding: 1.5rem 0 0;
-            border-top: 1.5px double var(--ink);
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--ink);
-            font-feature-settings: "tnum", "lnum";
+            padding: 1rem 1.1rem; border-top: 2px solid var(--border); font-weight: 700; color: var(--navy);
+            font-variant-numeric: tabular-nums;
         }
         .ledger-table tfoot td.num { text-align: right; }
-        .ledger-table tfoot td:first-child {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 24, "SOFT" 30, "wght" 500;
-            font-style: italic;
-            font-size: 1.15rem;
-        }
 
-        /* Strata */
-        .strata { margin-bottom: 4rem; }
-        .strata-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 0.85rem;
-            align-items: end;
-            margin-top: 1.5rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--rule);
-        }
-        .stratum {
-            grid-column: span 2;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            min-height: 200px;
-        }
+        /* Strata bars */
+        .strata-note { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.25rem; max-width: 680px; }
+        .strata-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.75rem; align-items: end; }
+        .stratum { display: flex; flex-direction: column; justify-content: flex-end; min-height: 190px; }
+        .stratum-rate { font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 0.5rem; }
         .stratum-bar {
-            background: var(--rule-dim);
-            border-top: 1px solid var(--ink);
-            height: 0;
-            transition: height 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
-            position: relative;
+            background: var(--blue); border-radius: 0.3rem 0.3rem 0 0; height: 0;
+            transition: height 1s cubic-bezier(0.2,0.7,0.2,1);
         }
         .results.is-visible .stratum-bar { height: var(--bar-height, 0%); }
-        .stratum[data-rate="0"]  .stratum-bar { background: var(--rule-dim); }
-        .stratum[data-rate="10"] .stratum-bar { background: #f0d9a8; }
-        .stratum[data-rate="20"] .stratum-bar { background: var(--gold-soft); }
-        .stratum[data-rate="30"] .stratum-bar { background: var(--crimson-soft); }
-        .stratum[data-rate="36"] .stratum-bar { background: var(--crimson); }
-        .stratum[data-rate="39"] .stratum-bar { background: var(--crimson-deep); }
-        .stratum-rate {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 60, "SOFT" 30, "wght" 400;
-            font-size: 1.3rem;
-            color: var(--ink);
-            letter-spacing: -0.02em;
-            margin-bottom: 0.5rem;
-        }
-        .stratum-amount {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            color: var(--ink-mute);
-            margin-top: 0.65rem;
-            letter-spacing: 0.04em;
-            font-feature-settings: "tnum";
-        }
-        .stratum.is-empty .stratum-rate,
-        .stratum.is-empty .stratum-amount { opacity: 0.3; }
+        .stratum[data-rate="0"]  .stratum-bar { background: #cbd5e1; }
+        .stratum[data-rate="10"] .stratum-bar { background: #93c5fd; }
+        .stratum[data-rate="20"] .stratum-bar { background: #60a5fa; }
+        .stratum[data-rate="30"] .stratum-bar { background: var(--blue); }
+        .stratum[data-rate="36"] .stratum-bar { background: var(--navy); }
+        .stratum[data-rate="39"] .stratum-bar { background: var(--navy-deep); }
+        .stratum-amount { font-size: 0.74rem; color: var(--muted); margin-top: 0.6rem; font-variant-numeric: tabular-nums; }
+        .stratum.is-empty .stratum-rate, .stratum.is-empty .stratum-amount { opacity: 0.35; }
 
-        .gauge {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 1.5rem;
-            margin-top: 2.5rem;
-            padding: 1.5rem 0;
-        }
-        .gauge-label {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 24, "SOFT" 50, "wght" 400;
-            font-style: italic;
-            font-size: 1.15rem;
-            color: var(--ink-soft);
-        }
-        .gauge-track {
-            position: relative;
-            height: 2px;
-            background: var(--rule);
-            overflow: visible;
-        }
-        .gauge-fill {
-            position: absolute;
-            inset: 0 auto 0 0;
-            background: var(--crimson);
-            width: 0;
-            transition: width 1.2s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
-            height: 2px;
-        }
-        .gauge-marker {
-            position: absolute;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 14px;
-            height: 14px;
-            background: var(--crimson);
-            border-radius: 50%;
-            left: 0;
-            transition: left 1.2s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
-            box-shadow: 0 0 0 4px var(--paper);
-        }
-        .gauge-percent {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 60, "SOFT" 30, "wght" 400;
-            font-size: 1.6rem;
-            color: var(--crimson);
-            font-feature-settings: "tnum";
-            letter-spacing: -0.01em;
-        }
+        /* Gauge */
+        .gauge { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; margin-top: 2rem; padding-top: 1.75rem; border-top: 1px solid var(--border); }
+        .gauge-label { font-size: 0.9rem; font-weight: 600; color: var(--ink-soft); }
+        .gauge-track { position: relative; height: 8px; background: var(--surface-alt); border-radius: 9999px; }
+        .gauge-fill { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 9999px; background: linear-gradient(90deg, var(--navy), var(--blue)); transition: width 1.1s 0.15s cubic-bezier(0.2,0.7,0.2,1); }
+        .gauge-marker { position: absolute; top: 50%; left: 0; transform: translate(-50%,-50%); width: 16px; height: 16px; background: #fff; border: 3px solid var(--blue); border-radius: 50%; box-shadow: var(--shadow-sm); transition: left 1.1s 0.15s cubic-bezier(0.2,0.7,0.2,1); }
+        .gauge-percent { font-size: 1.4rem; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
 
-        /* Counsel */
-        .counsel { display: none; }
-        .counsel.is-visible { display: block; animation: rise 0.6s 0.15s both cubic-bezier(0.2, 0.7, 0.2, 1); }
+        /* Insights */
+        .insight-callout {
+            background: var(--blue-soft); border: 1px solid #bfdbfe; border-radius: 0.875rem;
+            padding: 1.5rem 1.75rem; margin-bottom: 1.75rem;
+        }
+        .insight-callout .c-head { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.6rem; }
+        .insight-callout p { font-size: 1.02rem; line-height: 1.55; color: var(--ink-soft); }
+        .tips-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+        .tips-col h3 { font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
+        .tip { display: grid; grid-template-columns: 1.6rem 1fr; gap: 0.85rem; padding: 0.85rem 0; border-bottom: 1px solid #f1f5f9; }
+        .tip:last-child { border-bottom: none; }
+        .tip .num {
+            width: 1.6rem; height: 1.6rem; flex: none; display: inline-flex; align-items: center; justify-content: center;
+            background: var(--blue-soft); color: var(--blue); border-radius: 0.45rem; font-size: 0.78rem; font-weight: 700;
+        }
+        .tip strong { display: block; font-size: 0.95rem; font-weight: 600; color: var(--ink); margin-bottom: 0.15rem; }
+        .tip p { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
 
-        .pull-quote {
-            margin: 1rem 0 3rem;
-            padding: 0 0 2rem;
-            border-bottom: 1px solid var(--rule);
+        /* Footer */
+        .footer {
+            margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border);
+            text-align: center; color: var(--muted); font-size: 0.85rem;
         }
-        .pull-quote blockquote {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 144, "SOFT" 50, "wght" 350;
-            font-style: italic;
-            font-size: clamp(1.4rem, 2.6vw, 2rem);
-            line-height: 1.3;
-            color: var(--ink);
-            letter-spacing: -0.015em;
-            max-width: 900px;
-        }
-        .pull-quote blockquote::before {
-            content: "\201C";
-            font-size: 1.5em;
-            color: var(--crimson);
-            display: inline-block;
-            transform: translate(-0.1em, 0.2em);
-            margin-right: 0.05em;
-            line-height: 0;
-        }
-        .pull-quote cite {
-            display: block;
-            margin-top: 1.25rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--ink-mute);
-            font-style: normal;
-        }
+        .footer .disclaimer { color: var(--muted-soft); margin-top: 0.35rem; }
+        .footer .copy { margin-top: 1.25rem; font-size: 0.8rem; color: var(--muted-soft); }
+        .footer a { color: var(--navy); font-weight: 600; text-decoration: none; }
+        .footer a:hover { color: var(--blue); }
 
-        .counsel-cols {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-        }
-        .counsel-col h3 {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 60, "SOFT" 40, "wght" 450;
-            font-size: 1.5rem;
-            color: var(--ink);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--rule);
-            letter-spacing: -0.01em;
-        }
-        .counsel-item {
-            display: grid;
-            grid-template-columns: 32px 1fr;
-            gap: 1rem;
-            padding: 1rem 0;
-            border-bottom: 1px dotted var(--rule);
-        }
-        .counsel-item:last-child { border-bottom: none; }
-        .counsel-item .marker {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 24, "SOFT" 30, "wght" 400;
-            font-style: italic;
-            font-size: 1.1rem;
-            color: var(--crimson);
-            line-height: 1.4;
-        }
-        .counsel-item strong {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 24, "SOFT" 40, "wght" 550;
-            font-style: italic;
-            font-size: 1.05rem;
-            color: var(--ink);
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-        .counsel-item p {
-            font-size: 0.95rem;
-            color: var(--ink-soft);
-            line-height: 1.5;
-        }
-
-        /* Colophon */
-        .colophon {
-            margin-top: 6rem;
-            padding-top: 2rem;
-            border-top: 1px double var(--rule);
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            gap: 2rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--ink-mute);
-        }
-        .colophon .center {
-            font-family: 'Fraunces', serif;
-            font-variation-settings: "opsz" 18, "SOFT" 50, "wght" 350;
-            font-style: italic;
-            font-size: 0.95rem;
-            letter-spacing: 0;
-            text-transform: none;
-            color: var(--ink-soft);
-            text-align: center;
-        }
-        .colophon a { color: var(--crimson); text-decoration: none; border-bottom: 1px solid currentColor; }
-        .colophon a:hover { color: var(--crimson-deep); }
-        .colophon .right { justify-self: end; }
-
-        @keyframes rise {
-            from { opacity: 0; transform: translateY(14px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Responsive */
         @media (max-width: 900px) {
-            .page { padding: 1.5rem 1.25rem 4rem; }
-            .topbar { font-size: 0.62rem; gap: 0.85rem; }
-            .topbar .left, .topbar .right { display: none; }
-            .topbar .center { justify-self: center; }
-            .masthead { padding: 2.5rem 0 2rem; }
-            .section { margin-top: 3rem; }
-            .section-head { gap: 1rem; }
-            .form-grid { grid-template-columns: 1fr; gap: 1.75rem; }
+            .appbar-inner, .page { padding-left: 1.25rem; padding-right: 1.25rem; }
+            .brand .sub { display: none; }
+            .form-grid { grid-template-columns: 1fr; gap: 1.25rem; }
             .field.col-7, .field.col-5, .field.col-6 { grid-column: span 1; }
-            .calculate-bar { grid-template-columns: 1fr; gap: 1.25rem; }
+            .calc-row { flex-direction: column; align-items: stretch; gap: 1.1rem; }
             .btn { width: 100%; justify-content: center; }
-            .verdict { grid-template-columns: 1fr; gap: 2rem; }
-            .strata-grid { grid-template-columns: repeat(6, 1fr); gap: 0.5rem; }
-            .stratum { grid-column: span 1; min-height: 160px; }
-            .counsel-cols { grid-template-columns: 1fr; gap: 2.5rem; }
-            .colophon { grid-template-columns: 1fr; gap: 1.25rem; text-align: center; }
-            .colophon .right { justify-self: center; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            .summary-strip { grid-template-columns: 1fr; }
+            .summary-strip .item { border-right: none; border-bottom: 1px solid var(--border); }
+            .summary-strip .item:last-child { border-bottom: none; }
+            .strata-grid { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+            .stratum { min-height: 150px; }
+            .tips-cols { grid-template-columns: 1fr; gap: 2rem; }
+            .gauge { grid-template-columns: 1fr auto; }
+            .gauge-label { grid-column: 1 / -1; }
         }
 
         @media (prefers-reduced-motion: reduce) {
             * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
         }
+
+        @media print {
+            .appbar, #inputCard, #printBtn, .footer, .btn { display: none !important; }
+            body { background: #fff; }
+            .page { padding: 0; max-width: none; }
+            .card { box-shadow: none; border-color: var(--border-strong); }
+            .results, .insights { display: block !important; }
+        }
     </style>
 </head>
 <body>
-    <main class="page">
-
-        <div class="topbar">
-            <div class="left">F.Y. २०८२ — ८३ &nbsp;·&nbsp; Bikram Sambat</div>
-            <div class="center">
-                <span>Inland Revenue · Schedule One</span>
-                <span class="ornament"></span>
-                <span>Edition 01</span>
+    <!-- App bar -->
+    <header class="appbar">
+        <div class="appbar-inner">
+            <div class="brand">
+                <span class="logo" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6"/></svg>
+                </span>
+                <div>
+                    <div class="name">Nepal Tax Calculator</div>
+                    <div class="sub">Income Tax &middot; Inland Revenue Department</div>
+                </div>
             </div>
-            <div class="right">Issued under the Income Tax Act</div>
+            <span class="fy-pill">FY 2082-83</span>
         </div>
+    </header>
 
-        <header class="masthead">
-            <div class="edition">A Reckoning <span class="dot"></span> Nepal <span class="dot"></span> FY 2082—83</div>
+    <main class="page">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="eyebrow">Fiscal Year 2082&ndash;83</div>
+            <h1>Calculate Your Income Tax</h1>
+            <p>Estimate your Nepal income tax liability against the latest <strong>FY 2082&ndash;83 tax slabs</strong> set by the Inland Revenue Department. Supports individual and joint (couple) filing and Social Security Fund participation.</p>
+        </section>
 
-            <h1 class="wordmark">
-                <span>The Tax</span><span class="amp"> &amp; </span><span class="block">Ledger</span>
-            </h1>
-
-            <div class="subwordmark">
-                <span class="rule"></span>
-                <span class="text">A Calculator for the Salaried Citizen</span>
-                <span class="rule"></span>
-            </div>
-
-            <p class="deck">
-                A precise accounting of what the Inland Revenue Department asks of you this fiscal year — slab by slab, paisa by paisa. Enter your figures below; we will keep the reckoning <strong>honest</strong>.
-            </p>
-        </header>
-
-        <section class="section" id="particulars">
+        <!-- Income details -->
+        <section class="card card-pad" id="inputCard">
             <div class="section-head">
-                <span class="section-num">§ I</span>
-                <h2 class="section-title">Particulars of Income</h2>
-                <span class="section-meta">Step One of Two</span>
+                <span class="icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+                </span>
+                <h2>Income Details</h2>
+                <span class="meta">Step 1 of 2</span>
             </div>
 
             <div class="form-grid">
                 <div class="field col-7">
                     <div class="field-label">
-                        <span>Salary</span>
-                        <span class="hint" id="salary-hint">enter monthly gross, before deductions</span>
+                        <span class="lbl">Salary</span>
+                        <span class="hint" id="salary-hint">Monthly gross, before deductions</span>
                     </div>
-                    <div class="salary-input">
-                        <span class="currency">रु</span>
+                    <div class="amount-input">
+                        <span class="currency">NPR</span>
                         <input type="number" id="salary" placeholder="0" aria-label="Salary amount in NPR" inputmode="numeric">
                     </div>
                 </div>
 
                 <div class="field col-5">
                     <div class="field-label">
-                        <span>Period</span>
-                        <span class="hint">how this figure is reported</span>
+                        <span class="lbl">Income Period</span>
+                        <span class="hint">How this figure is reported</span>
                     </div>
                     <div class="segmented" role="radiogroup" aria-label="Income period">
                         <input type="radio" id="monthly" name="income-period" value="monthly" checked>
@@ -973,116 +478,116 @@
 
                 <div class="field col-6">
                     <div class="field-label">
-                        <span>Filing Status</span>
-                        <span class="hint">couples enjoy higher first slabs</span>
+                        <span class="lbl">Filing Status</span>
+                        <span class="hint">Couples get a higher first slab</span>
                     </div>
                     <div class="segmented" role="radiogroup" aria-label="Filing status">
                         <input type="radio" id="individual" name="marital" value="individual" checked>
                         <label for="individual">Individual</label>
                         <input type="radio" id="couple" name="marital" value="couple">
-                        <label for="couple">Couple, Joint</label>
+                        <label for="couple">Couple (Joint)</label>
                     </div>
                 </div>
 
                 <div class="field col-6">
                     <div class="field-label">
-                        <span>Social Security Fund</span>
-                        <span class="hint">contributing waives the 1% surcharge</span>
+                        <span class="lbl">Social Security Fund</span>
+                        <span class="hint">Waives the 1% social security tax</span>
                     </div>
                     <label class="ssf-toggle" id="ssf-toggle">
                         <input type="checkbox" id="ssf">
                         <span class="label-text">SSF Participation</span>
                         <span style="display:flex; align-items:center;">
                             <span class="state" id="ssf-state">Not enrolled</span>
-                            <span class="knob"></span>
+                            <span class="knob" aria-hidden="true"></span>
                         </span>
                     </label>
                 </div>
             </div>
 
-            <div class="calculate-bar">
-                <p class="calculate-note">
-                    All figures are calculated against the slabs of <em>FY 2082—83</em>. Adjust any field; the reckoning shall update on your command.
-                </p>
+            <div class="calc-row">
+                <p class="calc-note">Figures are calculated against the FY 2082&ndash;83 tax slabs. Fill in your details and calculate.</p>
                 <button class="btn" id="calculate" type="button">
-                    Render the Reckoning
+                    Calculate Tax
+                    <svg width="16" height="14" viewBox="0 0 16 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 7h12M9 3l4 4-4 4"/></svg>
                 </button>
             </div>
         </section>
 
+        <!-- Results -->
         <section class="section results" id="results" aria-live="polite">
             <div class="section-head">
-                <span class="section-num">§ II</span>
-                <h2 class="section-title">Statement of Liability</h2>
-                <span class="section-meta">Computed · Annualised</span>
+                <span class="icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-9"/></svg>
+                </span>
+                <h2>Tax Summary</h2>
+                <span class="meta">Annualised</span>
             </div>
 
-            <div class="verdict">
-                <div class="verdict-amount">
-                    <div class="verdict-label"><span class="marker"></span>Total Tax Payable, Annual</div>
-                    <div class="verdict-figure">
-                        <span class="npr">रु</span><span id="totalTax">0</span>
-                    </div>
-                    <div class="verdict-meta">
-                        <span class="pill" id="effRatePill">0.00% Effective</span>
-                        <span id="verdictNote">on income of रु 0</span>
-                    </div>
+            <div class="kpi-grid">
+                <div class="kpi accent-danger">
+                    <div class="k-label">Total Tax Payable</div>
+                    <div class="k-value tnum"><span class="npr-mark">NPR</span><span id="totalTax">0</span></div>
+                    <div class="k-sub"><span id="effRatePill">0.00%</span> effective &middot; <span id="verdictNote">on income of NPR 0</span></div>
                 </div>
-
-                <aside class="verdict-aside">
-                    <div>
-                        <div class="aside-label">Take-home, Net of Tax</div>
-                        <div class="aside-figure">
-                            <span class="npr">रु</span><span id="netIncome">0</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="aside-row"><span>Per Month</span><span class="v" id="monthlyNetIncome">रु 0</span></div>
-                        <div class="aside-row"><span>Income Tax</span><span class="v" id="incomeTax">रु 0</span></div>
-                        <div class="aside-row"><span>Social Security Tax</span><span class="v" id="ssfTax">रु 0</span></div>
-                    </div>
-                </aside>
+                <div class="kpi accent-success">
+                    <div class="k-label">Net Annual Income</div>
+                    <div class="k-value tnum"><span class="npr-mark">NPR</span><span id="netIncome">0</span></div>
+                    <div class="k-sub">After all taxes</div>
+                </div>
+                <div class="kpi">
+                    <div class="k-label">Net Monthly Income</div>
+                    <div class="k-value tnum" id="monthlyNetIncome">NPR 0</div>
+                    <div class="k-sub">Take-home per month</div>
+                </div>
+                <div class="kpi accent-blue">
+                    <div class="k-label">Tax Breakdown</div>
+                    <div class="k-sub" style="margin-top:0.55rem; display:flex; justify-content:space-between;"><span>Income Tax</span><strong class="tnum" id="incomeTax" style="color:var(--ink);">NPR 0</strong></div>
+                    <div class="k-sub" style="display:flex; justify-content:space-between;"><span>Social Security Tax</span><strong class="tnum" id="ssfTax" style="color:var(--ink);">NPR 0</strong></div>
+                </div>
             </div>
 
-            <div class="ledger">
-                <div class="section-head" style="margin-bottom: 1.5rem; padding-bottom: 0.5rem;">
-                    <span class="section-num" style="font-size: 1.2rem;">§ II.a</span>
-                    <h3 class="section-title" style="font-size: 1.4rem;">Slab Ledger</h3>
-                    <span class="section-meta">All figures in NPR</span>
+            <!-- Slab ledger -->
+            <div class="card card-pad" style="margin-bottom:1.5rem;">
+                <div class="subhead">
+                    <h3>Slab-by-Slab Breakdown</h3>
+                    <button class="btn btn-ghost" id="printBtn" type="button">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg>
+                        Print / Save PDF
+                    </button>
                 </div>
-                <table class="ledger-table">
-                    <thead>
-                        <tr>
-                            <th>Bracket</th>
-                            <th>Description</th>
-                            <th class="num">Taxable Amount</th>
-                            <th class="num">Tax</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ledgerBody"></tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3">Total assessed liability</td>
-                            <td class="num" id="ledgerTotal">रु 0</td>
-                        </tr>
-                    </tfoot>
-                </table>
+                <div class="table-wrap">
+                    <table class="ledger-table">
+                        <thead>
+                            <tr>
+                                <th>Rate</th>
+                                <th>Tax Slab</th>
+                                <th class="num">Taxable Amount</th>
+                                <th class="num">Tax</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledgerBody"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3">Total Tax Payable</td>
+                                <td class="num" id="ledgerTotal">NPR 0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
 
-            <div class="strata">
-                <div class="section-head" style="margin-bottom: 1rem; padding-bottom: 0.5rem;">
-                    <span class="section-num" style="font-size: 1.2rem;">§ II.b</span>
-                    <h3 class="section-title" style="font-size: 1.4rem;">The Strata of Your Income</h3>
-                    <span class="section-meta">By Marginal Rate</span>
+            <!-- Strata -->
+            <div class="card card-pad">
+                <div class="subhead">
+                    <h3>Income by Tax Bracket</h3>
+                    <span class="meta">By Marginal Rate</span>
                 </div>
-                <p style="font-family: 'Fraunces', serif; font-variation-settings: 'opsz' 18, 'SOFT' 50, 'wght' 350; font-style: italic; font-size: 1.05rem; color: var(--ink-soft); max-width: 720px;">
-                    Each column shows the rupees of income falling within that bracket. The taller the column, the larger that portion of your earnings.
-                </p>
-
+                <p class="strata-note">Each column shows the portion of your income that falls within that bracket. Taller columns represent a larger share of your earnings.</p>
                 <div class="strata-grid" id="strataGrid"></div>
 
                 <div class="gauge">
-                    <span class="gauge-label">Effective tax burden</span>
+                    <span class="gauge-label">Effective Tax Rate</span>
                     <div class="gauge-track">
                         <div class="gauge-fill" id="gaugeFill"></div>
                         <div class="gauge-marker" id="gaugeMarker"></div>
@@ -1092,93 +597,97 @@
             </div>
         </section>
 
-        <section class="section counsel" id="insights">
+        <!-- Insights -->
+        <section class="section insights" id="insights">
             <div class="section-head">
-                <span class="section-num">§ III</span>
-                <h2 class="section-title">Counsel &amp; Considerations</h2>
-                <span class="section-meta">Read Before Filing</span>
+                <span class="icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>
+                </span>
+                <h2>Tax Insights</h2>
+                <span class="meta">Read Before Filing</span>
             </div>
 
-            <div class="pull-quote">
-                <blockquote id="recommendation">
-                    Render the reckoning to receive a recommendation suited to your bracket and circumstances.
-                </blockquote>
-                <cite>— Personalised advisory, calculated</cite>
-            </div>
-
-            <div class="counsel-cols">
-                <div class="counsel-col">
-                    <h3>Lawful Reductions</h3>
-                    <div class="counsel-item">
-                        <span class="marker">i.</span>
-                        <div>
-                            <strong>Social Security Fund</strong>
-                            <p>Enrolling in the SSF waives the 1% social security surcharge applied to the first slab of your income.</p>
-                        </div>
+            <div class="card card-pad">
+                <div class="insight-callout">
+                    <div class="c-head">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                        Personalized Recommendation
                     </div>
-                    <div class="counsel-item">
-                        <span class="marker">ii.</span>
-                        <div>
-                            <strong>Life Insurance Premiums</strong>
-                            <p>Deduct up to NPR 25,000 of premiums paid on a qualifying life insurance policy.</p>
-                        </div>
-                    </div>
-                    <div class="counsel-item">
-                        <span class="marker">iii.</span>
-                        <div>
-                            <strong>Health Insurance Premiums</strong>
-                            <p>A further deduction of up to NPR 20,000 is permitted against health insurance premiums.</p>
-                        </div>
-                    </div>
-                    <div class="counsel-item">
-                        <span class="marker">iv.</span>
-                        <div>
-                            <strong>Pension Income</strong>
-                            <p>An additional 25% deduction applies to the first slab for receipts of pension income.</p>
-                        </div>
-                    </div>
+                    <p id="recommendation">Calculate your tax to see a recommendation tailored to your income bracket and circumstances.</p>
                 </div>
 
-                <div class="counsel-col">
-                    <h3>Strategies of Planning</h3>
-                    <div class="counsel-item">
-                        <span class="marker">v.</span>
-                        <div>
-                            <strong>Remote Work Allowance</strong>
-                            <p>Up to NPR 50,000 may be claimed where employment is rendered in designated remote areas.</p>
+                <div class="tips-cols">
+                    <div class="tips-col">
+                        <h3>Tax-Saving Opportunities</h3>
+                        <div class="tip">
+                            <span class="num">1</span>
+                            <div>
+                                <strong>Social Security Fund</strong>
+                                <p>Enrolling in the SSF waives the 1% social security tax applied to the first slab of your income.</p>
+                            </div>
+                        </div>
+                        <div class="tip">
+                            <span class="num">2</span>
+                            <div>
+                                <strong>Life Insurance Premiums</strong>
+                                <p>Deduct up to NPR 25,000 of premiums paid on a qualifying life insurance policy.</p>
+                            </div>
+                        </div>
+                        <div class="tip">
+                            <span class="num">3</span>
+                            <div>
+                                <strong>Health Insurance Premiums</strong>
+                                <p>Claim a further deduction of up to NPR 20,000 against health insurance premiums.</p>
+                            </div>
+                        </div>
+                        <div class="tip">
+                            <span class="num">4</span>
+                            <div>
+                                <strong>Pension Income</strong>
+                                <p>An additional 25% deduction applies to the first slab for pension income.</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="counsel-item">
-                        <span class="marker">vi.</span>
-                        <div>
-                            <strong>Filing Jointly as a Couple</strong>
-                            <p>Couples enjoy a 0% slab of NPR 600,000 — one lakh higher than the individual filer.</p>
+
+                    <div class="tips-col">
+                        <h3>Planning Strategies</h3>
+                        <div class="tip">
+                            <span class="num">5</span>
+                            <div>
+                                <strong>Remote Work Allowance</strong>
+                                <p>Claim up to NPR 50,000 where employment is performed in designated remote areas.</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="counsel-item">
-                        <span class="marker">vii.</span>
-                        <div>
-                            <strong>Approved Retirement Schemes</strong>
-                            <p>Contributions to recognised retirement funds carry favourable tax treatment under the Act.</p>
+                        <div class="tip">
+                            <span class="num">6</span>
+                            <div>
+                                <strong>File Jointly as a Couple</strong>
+                                <p>Couples get a 0% slab of NPR 600,000 — NPR 100,000 higher than the individual filer.</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="counsel-item">
-                        <span class="marker">viii.</span>
-                        <div>
-                            <strong>Income Splitting</strong>
-                            <p>Where lawful, distribute earnings across family members to lower the marginal rate borne by any one.</p>
+                        <div class="tip">
+                            <span class="num">7</span>
+                            <div>
+                                <strong>Approved Retirement Schemes</strong>
+                                <p>Contributions to recognized retirement funds receive favorable tax treatment under the Act.</p>
+                            </div>
+                        </div>
+                        <div class="tip">
+                            <span class="num">8</span>
+                            <div>
+                                <strong>Income Splitting</strong>
+                                <p>Where lawful, distribute earnings across family members to lower the marginal rate borne by any one person.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <footer class="colophon">
-            <div class="left">© 2025 · Set in Fraunces &amp; Instrument</div>
-            <div class="center">
-                A small instrument by <a href="https://github.com/thearjun">Arjun Adhikari</a>. For informational purposes; consult a tax professional before filing.
-            </div>
-            <div class="right">Schedule One · FY 2082—83</div>
+        <footer class="footer">
+            <p>Data based on Nepal tax rates for FY 2082&ndash;83.</p>
+            <p class="disclaimer">This calculator is for informational purposes only. Always consult a qualified tax professional before filing.</p>
+            <p class="copy">&copy; 2025 Nepal Tax Calculator &middot; Developed by <a href="https://github.com/thearjun">Arjun Adhikari</a></p>
         </footer>
     </main>
 
@@ -1186,10 +695,10 @@
         const $ = (id) => document.getElementById(id);
 
         $('monthly').addEventListener('change', () => {
-            $('salary-hint').textContent = 'enter monthly gross, before deductions';
+            $('salary-hint').textContent = 'Monthly gross, before deductions';
         });
         $('yearly').addEventListener('change', () => {
-            $('salary-hint').textContent = 'enter yearly gross, before deductions';
+            $('salary-hint').textContent = 'Yearly gross, before deductions';
         });
 
         const ssfToggle = $('ssf-toggle');
@@ -1205,16 +714,17 @@
             }
         });
 
-        const fmtNum = (n) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(n));
-        const fmtNpr = (n) => `रु ${fmtNum(n)}`;
+        $('printBtn').addEventListener('click', () => window.print());
 
-        function countUp(el, target, durationMs = 1100) {
+        const fmtNum = (n) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(n));
+        const fmtNpr = (n) => `NPR ${fmtNum(n)}`;
+
+        function countUp(el, target, durationMs = 1000) {
             const start = performance.now();
             function step(now) {
                 const t = Math.min(1, (now - start) / durationMs);
                 const eased = 1 - Math.pow(1 - t, 3);
-                const value = target * eased;
-                el.textContent = fmtNum(value);
+                el.textContent = fmtNum(target * eased);
                 if (t < 1) requestAnimationFrame(step);
                 else el.textContent = fmtNum(target);
             }
@@ -1230,9 +740,10 @@
 
             if (salary <= 0) {
                 $('salary').focus();
-                const sal = $('salary').closest('.salary-input');
-                sal.style.borderBottomColor = 'var(--crimson)';
-                setTimeout(() => { sal.style.borderBottomColor = ''; }, 1200);
+                const wrap = $('salary').closest('.amount-input');
+                wrap.style.borderColor = 'var(--danger)';
+                wrap.style.boxShadow = '0 0 0 3px rgba(220,38,38,0.15)';
+                setTimeout(() => { wrap.style.borderColor = ''; wrap.style.boxShadow = ''; }, 1400);
                 return;
             }
 
@@ -1280,18 +791,17 @@
             $('monthlyNetIncome').textContent = fmtNpr(monthlyNetIncome);
             $('incomeTax').textContent = fmtNpr(tax);
             $('ssfTax').textContent = fmtNpr(ssfTax);
-            $('effRatePill').textContent = `${effectiveTaxRate.toFixed(2)}% Effective`;
-            $('verdictNote').textContent = `on an income of ${fmtNpr(income)}`;
+            $('effRatePill').textContent = `${effectiveTaxRate.toFixed(2)}%`;
+            $('verdictNote').textContent = `on income of ${fmtNpr(income)}`;
 
             const tbody = $('ledgerBody');
             tbody.innerHTML = '';
-            taxBySlabs.forEach((slab, idx) => {
+            taxBySlabs.forEach((slab) => {
                 if (slab.amount === 0 && slab.rate !== 0) return;
                 const tr = document.createElement('tr');
-                const bracketLabel = ['I', 'II', 'III', 'IV', 'V', 'VI'][idx];
                 tr.innerHTML = `
-                    <td><span class="slab-name"><span class="rate-chip" data-rate="${slab.rate}">${slab.rate}%</span></span></td>
-                    <td>${slab.name} <span style="color: var(--ink-mute); font-size: 0.85rem;">· bracket ${bracketLabel}</span></td>
+                    <td><span class="rate-chip" data-rate="${slab.rate}">${slab.rate}%</span></td>
+                    <td>${slab.name}</td>
                     <td class="num">${fmtNpr(slab.amount)}</td>
                     <td class="num">${fmtNpr(slab.tax)}</td>
                 `;
@@ -1301,8 +811,8 @@
             if (ssfTax > 0) {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><span class="slab-name"><span class="rate-chip" data-rate="ssf">1%</span></span></td>
-                    <td>Social Security Tax <span style="color: var(--ink-mute); font-size: 0.85rem;">· surcharge</span></td>
+                    <td><span class="rate-chip" data-rate="ssf">1%</span></td>
+                    <td>Social Security Tax</td>
                     <td class="num">${fmtNpr(Math.min(slabs.base, income))}</td>
                     <td class="num">${fmtNpr(ssfTax)}</td>
                 `;
@@ -1335,7 +845,7 @@
             const gaugeEl = $('gaugePercent');
             const gStart = performance.now();
             function gStep(now) {
-                const t = Math.min(1, (now - gStart) / 1300);
+                const t = Math.min(1, (now - gStart) / 1200);
                 const eased = 1 - Math.pow(1 - t, 3);
                 gaugeEl.textContent = `${(effectiveTaxRate * eased).toFixed(2)}%`;
                 if (t < 1) requestAnimationFrame(gStep);
@@ -1358,21 +868,21 @@
 
         function recommendationFor(income, totalTax, taxRate, maritalStatus, ssf) {
             if (income < 600000) {
-                return 'Your earnings sit gently within the lowest stratum. Tax planning is, at this stage, less consequential than the patient pursuit of greater earning capacity.';
+                return 'Your income sits within the lowest tax bracket. At this stage, focus on growing your earning potential — tax planning will matter more as your income rises.';
             }
             if (income < 1000000) {
                 if (!ssf) {
-                    return 'A modest yet meaningful saving awaits — enrol with the Social Security Fund to waive the 1% surcharge. Pair this with life and health insurance deductions for further relief.';
+                    return 'Consider enrolling in the Social Security Fund (SSF) to waive the 1% social security tax. Pair this with life and health insurance premium deductions for further savings.';
                 }
-                return 'Your SSF enrolment already serves you well. Consider claiming life and health insurance premiums to further reduce your assessed liability.';
+                return 'Your SSF enrolment is already saving you money. Consider claiming life and health insurance premium deductions to further reduce your tax liability.';
             }
             if (income < 2000000) {
                 if (maritalStatus === 'individual' && income > 1000000) {
-                    return 'Couples filing jointly enjoy a 0% slab of NPR 600,000 rather than 500,000. Where lawful and appropriate, joint filing may yield material savings against your present arrangement.';
+                    return 'Couples filing jointly get a 0% slab of NPR 600,000 instead of NPR 500,000. Where applicable, joint filing may yield meaningful savings over your current arrangement.';
                 }
-                return 'You occupy the upper-middle bracket. Maximise every available deduction — premiums, retirement contributions, allowances — to keep your effective rate trim.';
+                return 'You are in the upper-middle bracket. Maximize every available deduction — insurance premiums, retirement contributions, and allowances — to keep your effective rate down.';
             }
-            return 'At this stratum, a single sentence will not do. Engage a tax professional, consider tax-advantaged instruments, and treat planning as a continuous practice rather than an annual chore.';
+            return 'At this income level, consider comprehensive planning with a tax professional. Explore tax-advantaged instruments and treat planning as an ongoing practice rather than an annual task.';
         }
     </script>
 
