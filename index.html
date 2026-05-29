@@ -648,10 +648,13 @@
                     </div>
                     <div class="opt-stats">
                         <div class="opt-row highlight"><span>Recommended contribution</span><strong id="optMaxContrib">NPR 0</strong></div>
+                        <div class="opt-row"><span>CIT deposit &middot; per year</span><strong id="optDepositYear">NPR 0</strong></div>
+                        <div class="opt-row"><span>CIT deposit &middot; per month</span><strong id="optDepositMonth">NPR 0</strong></div>
                         <div class="opt-row"><span>Taxable income after CIT</span><strong id="optTaxable">NPR 0</strong></div>
                         <div class="opt-row"><span>Tax without CIT</span><strong id="optTaxWithout">NPR 0</strong></div>
                         <div class="opt-row"><span>Tax with CIT</span><strong id="optTaxWith">NPR 0</strong></div>
-                        <div class="opt-row"><span>Cash in hand after CIT</span><strong id="optCash">NPR 0</strong></div>
+                        <div class="opt-row"><span>Take-home &middot; per year</span><strong id="optCashYear">NPR 0</strong></div>
+                        <div class="opt-row"><span>Take-home &middot; per month</span><strong id="optCashMonth">NPR 0</strong></div>
                     </div>
                 </div>
                 <p class="opt-note">
@@ -931,7 +934,7 @@
             const maxSaving = baseNoCit - withMaxCit;
             const currentSaving = baseNoCit - totalTax;
             renderOptimization({ citEnabled, income, citCap, citDeduction, taxableIncome, otherDeductions,
-                baselineTax: baseNoCit, currentTax: totalTax, netIncome, maxSaving, currentSaving });
+                baselineTax: baseNoCit, currentTax: totalTax, withMaxCit, netIncome, maxSaving, currentSaving });
 
             countUp($('totalTax'), totalTax);
             countUp($('netIncome'), netIncome);
@@ -1122,16 +1125,28 @@
         }
 
         function renderOptimization(o) {
-            $('optMaxContrib').textContent = fmtNpr(o.citCap);
-            $('optTaxWithout').textContent = fmtNpr(o.baselineTax);
-            $('optTaxWith').textContent = fmtNpr(o.currentTax);
+            const applied = o.citEnabled && o.citDeduction > 0;
+            const maxDeposit = Math.min(o.citCap, Math.max(0, o.income - (o.otherDeductions || 0)));
 
-            if (!o.citEnabled || o.citDeduction <= 0) {
-                const potentialTaxable = Math.max(0, o.income - (o.otherDeductions || 0) - o.citCap);
+            // Applied -> show actual figures; otherwise -> preview the recommended (max) scenario
+            const deposit = applied ? o.citDeduction : maxDeposit;
+            const taxWith = applied ? o.currentTax : o.withMaxCit;
+            const taxable = applied ? o.taxableIncome : Math.max(0, o.income - (o.otherDeductions || 0) - o.citCap);
+            const cashYear = (o.income - taxWith) - deposit;
+            const saving = applied ? o.currentSaving : o.maxSaving;
+
+            $('optMaxContrib').textContent = fmtNpr(o.citCap);
+            $('optDepositYear').textContent = fmtNpr(deposit);
+            $('optDepositMonth').textContent = fmtNpr(deposit / 12);
+            $('optTaxable').textContent = fmtNpr(taxable);
+            $('optTaxWithout').textContent = fmtNpr(o.baselineTax);
+            $('optTaxWith').textContent = fmtNpr(taxWith);
+            $('optCashYear').textContent = fmtNpr(cashYear);
+            $('optCashMonth').textContent = fmtNpr(cashYear / 12);
+            countUp($('optSaving'), saving);
+
+            if (!applied) {
                 $('optSavingLabel').textContent = 'Potential Tax Saving';
-                $('optTaxable').textContent = fmtNpr(potentialTaxable);
-                $('optCash').textContent = fmtNpr(o.netIncome);
-                countUp($('optSaving'), o.maxSaving);
                 if (o.citCap <= 0) {
                     $('optStatus').textContent = '—';
                     $('optText').textContent = 'Enter your salary above to see how much you could save through the Citizen Investment Trust (CIT).';
@@ -1140,20 +1155,17 @@
                     $('optText').textContent = 'At your current income there is little or no income tax to offset, so a CIT contribution offers minimal tax benefit right now.';
                 } else {
                     $('optStatus').textContent = 'Recommended';
-                    $('optText').textContent = `Contribute up to ${fmtNpr(o.citCap)} to the Citizen Investment Trust (CIT) to lower your taxable income to ${fmtNpr(potentialTaxable)} and save about ${fmtNpr(o.maxSaving)} in tax. Turn on CIT above to apply it.`;
+                    $('optText').textContent = `Deposit ${fmtNpr(deposit)} a year (${fmtNpr(deposit / 12)} a month) to the Citizen Investment Trust (CIT) to lower your taxable income to ${fmtNpr(taxable)} and save about ${fmtNpr(o.maxSaving)} in tax. Turn on CIT above to apply it.`;
                 }
             } else {
                 $('optStatus').textContent = 'Applied';
                 $('optSavingLabel').textContent = 'Your Tax Saving';
-                $('optTaxable').textContent = fmtNpr(o.taxableIncome);
-                $('optCash').textContent = fmtNpr(o.netIncome - o.citDeduction);
-                countUp($('optSaving'), o.currentSaving);
                 const room = o.citCap - o.citDeduction;
                 if (room > 1) {
                     const extra = o.maxSaving - o.currentSaving;
-                    $('optText').textContent = `You're contributing ${fmtNpr(o.citDeduction)} and saving ${fmtNpr(o.currentSaving)} in tax. Contribute the full ${fmtNpr(o.citCap)} (the maximum deductible) to save up to ${fmtNpr(o.maxSaving)} — an extra ${fmtNpr(extra)}.`;
+                    $('optText').textContent = `You're depositing ${fmtNpr(o.citDeduction)} a year (${fmtNpr(o.citDeduction / 12)} a month) and saving ${fmtNpr(o.currentSaving)} in tax. Deposit the full ${fmtNpr(o.citCap)} to save up to ${fmtNpr(o.maxSaving)} — an extra ${fmtNpr(extra)}.`;
                 } else {
-                    $('optText').textContent = `You're claiming the maximum CIT deduction (${fmtNpr(o.citDeduction)}) and saving ${fmtNpr(o.currentSaving)} in tax. This contribution stays your money — it's invested in the fund for your future.`;
+                    $('optText').textContent = `You're depositing the maximum ${fmtNpr(o.citDeduction)} a year (${fmtNpr(o.citDeduction / 12)} a month) and saving ${fmtNpr(o.currentSaving)} in tax. This deposit stays your money — it's invested in the fund for your future.`;
                 }
             }
         }
