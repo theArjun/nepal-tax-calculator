@@ -174,13 +174,20 @@
         .field.col-7 { grid-column: span 7; }
         .field.col-5 { grid-column: span 5; }
         .field.col-6 { grid-column: span 6; }
+        .field.col-4 { grid-column: span 4; }
+        .form-subhead {
+            grid-column: span 12; display: flex; align-items: baseline; gap: 0.75rem;
+            padding-top: 1.25rem; margin-top: 0.25rem; border-top: 1px solid var(--border);
+        }
+        .form-subhead .title { font-size: 0.92rem; font-weight: 700; color: var(--navy); }
+        .form-subhead .optional { font-size: 0.78rem; color: var(--muted-soft); }
 
         .field-label {
-            display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem;
-            margin-bottom: 0.55rem;
+            display: flex; flex-direction: column; gap: 0.15rem;
+            margin-bottom: 0.55rem; min-height: 2.4rem;
         }
         .field-label .lbl { font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
-        .field-label .hint { font-size: 0.76rem; color: var(--muted-soft); font-weight: 400; }
+        .field-label .hint { font-size: 0.76rem; color: var(--muted-soft); font-weight: 400; line-height: 1.3; }
 
         .amount-input {
             display: flex; align-items: center; gap: 0.4rem;
@@ -321,6 +328,7 @@
         .rate-chip[data-rate="36"]  { background: var(--navy); color: #fff; }
         .rate-chip[data-rate="39"]  { background: var(--navy-deep); color: #fff; }
         .rate-chip[data-rate="ssf"] { background: var(--success-soft); color: var(--success); }
+        .rate-chip[data-rate="credit"] { background: var(--success-soft); color: var(--success); min-width: auto; }
         .ledger-table tfoot td {
             padding: 1rem 1.1rem; border-top: 2px solid var(--border); font-weight: 700; color: var(--navy);
             font-variant-numeric: tabular-nums;
@@ -372,6 +380,29 @@
         .tip strong { display: block; font-size: 0.95rem; font-weight: 600; color: var(--ink); margin-bottom: 0.15rem; }
         .tip p { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
 
+        /* CIT panel */
+        .cit-panel { display: flex; flex-direction: column; gap: 0.85rem; }
+        .cit-controls { display: flex; gap: 0.75rem; align-items: stretch; }
+        .cit-controls .amount-input { flex: 1; height: 52px; }
+        .cit-controls .amount-input input { font-size: 1.25rem; }
+        .cit-controls .btn-ghost { white-space: nowrap; align-self: stretch; }
+        .cit-controls .btn-ghost strong { font-weight: 700; }
+
+        /* Optimization card */
+        .opt-card { border-left: 3px solid var(--success); }
+        .opt-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 2rem; align-items: start; }
+        .opt-saving { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; color: var(--success); margin-top: 0.35rem; font-variant-numeric: tabular-nums; }
+        .opt-saving .npr-mark { color: #6ee7b7; }
+        .opt-text { margin-top: 0.85rem; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.55; }
+        .opt-stats { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.4rem 1.1rem; }
+        .opt-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.7rem 0; border-bottom: 1px dashed var(--border); font-size: 0.9rem; color: var(--muted); }
+        .opt-row:last-child { border-bottom: none; }
+        .opt-row strong { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+        .opt-row.highlight strong { color: var(--success); }
+        .opt-note { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.82rem; line-height: 1.6; color: var(--muted); }
+        .opt-note strong { color: var(--ink-soft); font-weight: 600; }
+        @media (max-width: 900px) { .opt-grid { grid-template-columns: 1fr; gap: 1.25rem; } }
+
         /* Footer */
         .footer {
             margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border);
@@ -389,7 +420,7 @@
             .appbar-inner, .page { padding-left: 1.25rem; padding-right: 1.25rem; }
             .brand .sub { display: none; }
             .form-grid { grid-template-columns: 1fr; gap: 1.25rem; }
-            .field.col-7, .field.col-5, .field.col-6 { grid-column: span 1; }
+            .field.col-7, .field.col-5, .field.col-6, .field.col-4 { grid-column: span 1; }
             .calc-row { flex-direction: column; align-items: stretch; gap: 1.1rem; }
             .btn { width: 100%; justify-content: center; }
             .kpi-grid { grid-template-columns: 1fr 1fr; }
@@ -503,6 +534,68 @@
                         </span>
                     </label>
                 </div>
+
+                <div class="field col-12">
+                    <div class="field-label">
+                        <span class="lbl">Citizen Investment Trust (CIT)</span>
+                        <span class="hint">Deductible up to &#8531; of income, capped at NPR 300,000 (NPR 500,000 with SSF)</span>
+                    </div>
+                    <div class="cit-panel">
+                        <label class="ssf-toggle" id="cit-toggle">
+                            <input type="checkbox" id="cit">
+                            <span class="label-text">Contribute to CIT for maximum tax benefit</span>
+                            <span style="display:flex; align-items:center;">
+                                <span class="state" id="cit-state">No</span>
+                                <span class="knob" aria-hidden="true"></span>
+                            </span>
+                        </label>
+                        <div class="cit-controls" id="cit-controls" hidden>
+                            <div class="amount-input">
+                                <span class="currency">NPR</span>
+                                <input type="number" id="citAmount" placeholder="0" inputmode="numeric" aria-label="Annual CIT contribution">
+                            </div>
+                            <button type="button" class="btn btn-ghost" id="citMaxBtn">Use max (<strong id="citMaxHint">NPR 0</strong>)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-subhead">
+                    <span class="title">Insurance &amp; Medical</span>
+                    <span class="optional">Optional &middot; further reduces your tax</span>
+                </div>
+
+                <div class="field col-4">
+                    <div class="field-label">
+                        <span class="lbl">Life Insurance Premium</span>
+                        <span class="hint">Annual premium &mdash; deductible up to NPR 40,000</span>
+                    </div>
+                    <div class="amount-input">
+                        <span class="currency">NPR</span>
+                        <input type="number" id="lifePremium" placeholder="0" inputmode="numeric" aria-label="Annual life insurance premium">
+                    </div>
+                </div>
+
+                <div class="field col-4">
+                    <div class="field-label">
+                        <span class="lbl">Health Insurance Premium</span>
+                        <span class="hint">Annual premium &mdash; deductible up to NPR 20,000</span>
+                    </div>
+                    <div class="amount-input">
+                        <span class="currency">NPR</span>
+                        <input type="number" id="healthPremium" placeholder="0" inputmode="numeric" aria-label="Annual health insurance premium">
+                    </div>
+                </div>
+
+                <div class="field col-4">
+                    <div class="field-label">
+                        <span class="lbl">Medical Expenses</span>
+                        <span class="hint">Medical tax credit &mdash; 15%, up to NPR 1,500</span>
+                    </div>
+                    <div class="amount-input">
+                        <span class="currency">NPR</span>
+                        <input type="number" id="medicalExpenses" placeholder="0" inputmode="numeric" aria-label="Annual medical expenses">
+                    </div>
+                </div>
             </div>
 
             <div class="calc-row">
@@ -544,7 +637,33 @@
                     <div class="k-label">Tax Breakdown</div>
                     <div class="k-sub" style="margin-top:0.55rem; display:flex; justify-content:space-between;"><span>Income Tax</span><strong class="tnum" id="incomeTax" style="color:var(--ink);">NPR 0</strong></div>
                     <div class="k-sub" style="display:flex; justify-content:space-between;"><span>Social Security Tax</span><strong class="tnum" id="ssfTax" style="color:var(--ink);">NPR 0</strong></div>
+                    <div class="k-sub" id="medCreditRow" style="display:none; justify-content:space-between;"><span>Medical Tax Credit</span><strong class="tnum" id="medicalCredit" style="color:var(--success);">NPR 0</strong></div>
                 </div>
+            </div>
+
+            <!-- Tax optimization -->
+            <div class="card card-pad opt-card" id="optCard" style="margin-bottom:1.5rem;">
+                <div class="subhead">
+                    <h3>Tax Optimization &mdash; Citizen Investment Trust</h3>
+                    <span class="meta" id="optStatus">Recommended</span>
+                </div>
+                <div class="opt-grid">
+                    <div>
+                        <div class="k-label" id="optSavingLabel">Potential Tax Saving</div>
+                        <div class="opt-saving tnum"><span class="npr-mark">NPR</span><span id="optSaving">0</span></div>
+                        <p class="opt-text" id="optText">Enter your salary and calculate to see your CIT tax-saving opportunity.</p>
+                    </div>
+                    <div class="opt-stats">
+                        <div class="opt-row highlight"><span>Recommended contribution</span><strong id="optMaxContrib">NPR 0</strong></div>
+                        <div class="opt-row"><span>Taxable income after CIT</span><strong id="optTaxable">NPR 0</strong></div>
+                        <div class="opt-row"><span>Tax without CIT</span><strong id="optTaxWithout">NPR 0</strong></div>
+                        <div class="opt-row"><span>Tax with CIT</span><strong id="optTaxWith">NPR 0</strong></div>
+                        <div class="opt-row"><span>Cash in hand after CIT</span><strong id="optCash">NPR 0</strong></div>
+                    </div>
+                </div>
+                <p class="opt-note">
+                    <strong>How the deduction limit works:</strong> Deductions for approved retirement funds &mdash; CIT, SSF, and provident/gratuity funds &mdash; are combined. The deductible amount is the lowest of one-third of assessable income, your actual contribution, or <strong>NPR 300,000</strong> per year. Social Security Fund (SSF) participants get a higher ceiling of <strong>NPR 500,000</strong>. These two ceilings cannot be stacked.
+                </p>
             </div>
 
             <!-- Slab ledger -->
@@ -630,18 +749,25 @@
                             <span class="num">2</span>
                             <div>
                                 <strong>Life Insurance Premiums</strong>
-                                <p>Deduct up to NPR 25,000 of premiums paid on a qualifying life insurance policy.</p>
+                                <p>Deduct your annual life insurance premium, up to NPR 40,000. Couples who are both employed may combine their premiums up to the limit. The policy must be from a resident Nepali insurer.</p>
                             </div>
                         </div>
                         <div class="tip">
                             <span class="num">3</span>
                             <div>
                                 <strong>Health Insurance Premiums</strong>
-                                <p>Claim a further deduction of up to NPR 20,000 against health insurance premiums.</p>
+                                <p>Deduct your annual health insurance premium, up to NPR 20,000, for a policy from a resident Nepali insurer.</p>
                             </div>
                         </div>
                         <div class="tip">
                             <span class="num">4</span>
+                            <div>
+                                <strong>Medical Tax Credit</strong>
+                                <p>Resident individuals can claim a credit against tax of the lowest of NPR 1,500, 15% of actual medical expenses, or your tax liability.</p>
+                            </div>
+                        </div>
+                        <div class="tip">
+                            <span class="num">5</span>
                             <div>
                                 <strong>Pension Income</strong>
                                 <p>An additional 25% deduction applies to the first slab for pension income.</p>
@@ -652,28 +778,28 @@
                     <div class="tips-col">
                         <h3>Planning Strategies</h3>
                         <div class="tip">
-                            <span class="num">5</span>
+                            <span class="num">6</span>
                             <div>
                                 <strong>Remote Work Allowance</strong>
                                 <p>Claim up to NPR 50,000 where employment is performed in designated remote areas.</p>
                             </div>
                         </div>
                         <div class="tip">
-                            <span class="num">6</span>
+                            <span class="num">7</span>
                             <div>
                                 <strong>File Jointly as a Couple</strong>
                                 <p>Couples get a 0% slab of NPR 600,000 — NPR 100,000 higher than the individual filer.</p>
                             </div>
                         </div>
                         <div class="tip">
-                            <span class="num">7</span>
+                            <span class="num">8</span>
                             <div>
                                 <strong>Approved Retirement Schemes</strong>
-                                <p>Contributions to recognized retirement funds receive favorable tax treatment under the Act.</p>
+                                <p>Contributions to recognized retirement funds (such as CIT) receive favorable tax treatment under the Act.</p>
                             </div>
                         </div>
                         <div class="tip">
-                            <span class="num">8</span>
+                            <span class="num">9</span>
                             <div>
                                 <strong>Income Splitting</strong>
                                 <p>Where lawful, distribute earnings across family members to lower the marginal rate borne by any one person.</p>
@@ -714,6 +840,34 @@
             }
         });
 
+        // Citizen Investment Trust (CIT) controls
+        const citToggle = $('cit-toggle');
+        const citInput = $('cit');
+        const citState = $('cit-state');
+        const citControls = $('cit-controls');
+        citInput.addEventListener('change', () => {
+            if (citInput.checked) {
+                citToggle.classList.add('is-on');
+                citState.textContent = 'Yes';
+                citControls.hidden = false;
+                refreshCitMax();
+                if (!parseFloat($('citAmount').value)) {
+                    $('citAmount').value = Math.round(citCapFor(currentIncome(), $('ssf').checked));
+                }
+            } else {
+                citToggle.classList.remove('is-on');
+                citState.textContent = 'No';
+                citControls.hidden = true;
+            }
+        });
+        $('citMaxBtn').addEventListener('click', () => {
+            $('citAmount').value = Math.round(citCapFor(currentIncome(), $('ssf').checked));
+        });
+        $('salary').addEventListener('input', refreshCitMax);
+        $('monthly').addEventListener('change', refreshCitMax);
+        $('yearly').addEventListener('change', refreshCitMax);
+        $('ssf').addEventListener('change', refreshCitMax);
+
         $('printBtn').addEventListener('click', () => window.print());
 
         const fmtNum = (n) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(n));
@@ -751,46 +905,53 @@
                 ? { base: 500000, next1: 200000, next2: 300000, next3: 1000000, next4: 2000000 }
                 : { base: 600000, next1: 200000, next2: 300000, next3: 900000, next4: 2000000 };
 
-            const ssfTax = ssf ? 0 : Math.min(slabs.base, income) * 0.01;
-            let remaining = income;
-            let tax = 0;
-            const taxBySlabs = [];
+            // Insurance & medical reliefs
+            const lifePremium = parseFloat($('lifePremium').value) || 0;
+            const healthPremium = parseFloat($('healthPremium').value) || 0;
+            const medicalExpenses = parseFloat($('medicalExpenses').value) || 0;
+            const lifeDeduction = Math.min(lifePremium, 40000);   // up to NPR 40,000
+            const healthDeduction = Math.min(healthPremium, 20000); // up to NPR 20,000
+            const otherDeductions = lifeDeduction + healthDeduction;
 
-            const firstSlabAmount = Math.min(slabs.base, remaining);
-            remaining -= firstSlabAmount;
-            taxBySlabs.push({ name: 'First Slab', rate: 0, capacity: slabs.base, amount: firstSlabAmount, tax: 0 });
+            // Citizen Investment Trust (CIT)
+            const citEnabled = $('cit').checked;
+            const citCap = citCapFor(income, ssf);
+            const citContribution = citEnabled ? (parseFloat($('citAmount').value) || 0) : 0;
+            const citDeduction = Math.min(citContribution, citCap);
 
-            const pushSlab = (name, rate, capacity, multiplier) => {
-                if (remaining > 0) {
-                    const a = Math.min(capacity, remaining);
-                    const t = a * multiplier; tax += t; remaining -= a;
-                    taxBySlabs.push({ name, rate, capacity, amount: a, tax: t });
-                } else {
-                    taxBySlabs.push({ name, rate, capacity, amount: 0, tax: 0 });
-                }
-            };
-            pushSlab('Second Slab', 10, slabs.next1, 0.10);
-            pushSlab('Third Slab',  20, slabs.next2, 0.20);
-            pushSlab('Fourth Slab', 30, slabs.next3, 0.30);
-            pushSlab('Fifth Slab',  36, slabs.next4, 0.36);
+            const totalDeductions = otherDeductions + citDeduction;
+            const taxableIncome = Math.max(0, income - totalDeductions);
 
-            if (remaining > 0) {
-                const t = remaining * 0.39; tax += t;
-                taxBySlabs.push({ name: 'Sixth Slab', rate: 39, capacity: remaining, amount: remaining, tax: t });
-            } else {
-                taxBySlabs.push({ name: 'Sixth Slab', rate: 39, capacity: 0, amount: 0, tax: 0 });
-            }
-
-            const totalTax = tax + ssfTax;
+            const current = taxAfter(income, totalDeductions, slabs, ssf, medicalExpenses);
+            const tax = current.tax;               // gross income tax (sum of slabs)
+            const ssfTax = current.ssfTax;
+            const medicalCredit = current.credit;  // medical tax credit applied
+            const totalTax = current.totalTax;     // gross tax − credit + SSF
+            const taxBySlabs = current.taxBySlabs;
             const netIncome = income - totalTax;
             const monthlyNetIncome = netIncome / 12;
-            const effectiveTaxRate = (totalTax / income) * 100;
+            const effectiveTaxRate = income > 0 ? (totalTax / income) * 100 : 0;
+
+            // CIT optimization (isolates CIT benefit; other reliefs held constant)
+            const baseNoCit  = taxAfter(income, otherDeductions, slabs, ssf, medicalExpenses).totalTax;
+            const withMaxCit = taxAfter(income, otherDeductions + citCap, slabs, ssf, medicalExpenses).totalTax;
+            const maxSaving = baseNoCit - withMaxCit;
+            const currentSaving = baseNoCit - totalTax;
+            renderOptimization({ citEnabled, income, citCap, citDeduction, taxableIncome, otherDeductions,
+                baselineTax: baseNoCit, currentTax: totalTax, netIncome, maxSaving, currentSaving });
 
             countUp($('totalTax'), totalTax);
             countUp($('netIncome'), netIncome);
             $('monthlyNetIncome').textContent = fmtNpr(monthlyNetIncome);
             $('incomeTax').textContent = fmtNpr(tax);
             $('ssfTax').textContent = fmtNpr(ssfTax);
+            const medRow = $('medCreditRow');
+            if (medicalCredit > 0) {
+                medRow.style.display = 'flex';
+                $('medicalCredit').textContent = `−${fmtNpr(medicalCredit)}`;
+            } else {
+                medRow.style.display = 'none';
+            }
             $('effRatePill').textContent = `${effectiveTaxRate.toFixed(2)}%`;
             $('verdictNote').textContent = `on income of ${fmtNpr(income)}`;
 
@@ -813,8 +974,19 @@
                 tr.innerHTML = `
                     <td><span class="rate-chip" data-rate="ssf">1%</span></td>
                     <td>Social Security Tax</td>
-                    <td class="num">${fmtNpr(Math.min(slabs.base, income))}</td>
+                    <td class="num">${fmtNpr(Math.min(slabs.base, taxableIncome))}</td>
                     <td class="num">${fmtNpr(ssfTax)}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            if (medicalCredit > 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="rate-chip" data-rate="credit">Credit</span></td>
+                    <td>Medical Tax Credit</td>
+                    <td class="num">&mdash;</td>
+                    <td class="num" style="color:var(--success);">&minus;${fmtNpr(medicalCredit)}</td>
                 `;
                 tbody.appendChild(tr);
             }
@@ -884,6 +1056,114 @@
             }
             return 'At this income level, consider comprehensive planning with a tax professional. Explore tax-advantaged instruments and treat planning as an ongoing practice rather than an annual task.';
         }
+
+        // Compute income tax (and 1% social security tax) on a given taxable income
+        function computeTax(income, slabs, ssfEnabled) {
+            const ssfTax = ssfEnabled ? 0 : Math.min(slabs.base, income) * 0.01;
+            let remaining = income;
+            let tax = 0;
+            const taxBySlabs = [];
+
+            const firstSlabAmount = Math.min(slabs.base, remaining);
+            remaining -= firstSlabAmount;
+            taxBySlabs.push({ name: 'First Slab', rate: 0, capacity: slabs.base, amount: firstSlabAmount, tax: 0 });
+
+            const pushSlab = (name, rate, capacity, multiplier) => {
+                if (remaining > 0) {
+                    const a = Math.min(capacity, remaining);
+                    const t = a * multiplier; tax += t; remaining -= a;
+                    taxBySlabs.push({ name, rate, capacity, amount: a, tax: t });
+                } else {
+                    taxBySlabs.push({ name, rate, capacity, amount: 0, tax: 0 });
+                }
+            };
+            pushSlab('Second Slab', 10, slabs.next1, 0.10);
+            pushSlab('Third Slab',  20, slabs.next2, 0.20);
+            pushSlab('Fourth Slab', 30, slabs.next3, 0.30);
+            pushSlab('Fifth Slab',  36, slabs.next4, 0.36);
+
+            if (remaining > 0) {
+                const t = remaining * 0.39; tax += t;
+                taxBySlabs.push({ name: 'Sixth Slab', rate: 39, capacity: remaining, amount: remaining, tax: t });
+            } else {
+                taxBySlabs.push({ name: 'Sixth Slab', rate: 39, capacity: 0, amount: 0, tax: 0 });
+            }
+
+            return { tax, ssfTax, totalTax: tax + ssfTax, taxBySlabs };
+        }
+
+        // Tax after deductions (reduce taxable income) and the medical tax credit
+        // (applied against income tax: lowest of NPR 1,500, 15% of medical expenses, or tax).
+        function taxAfter(income, deductions, slabs, ssfEnabled, medicalExpenses) {
+            const taxable = Math.max(0, income - Math.max(0, deductions));
+            const r = computeTax(taxable, slabs, ssfEnabled);
+            const credit = Math.max(0, Math.min(1500, 0.15 * (medicalExpenses || 0), r.tax));
+            return {
+                tax: r.tax,
+                ssfTax: r.ssfTax,
+                credit,
+                taxBySlabs: r.taxBySlabs,
+                totalTax: (r.tax - credit) + r.ssfTax,
+                taxable
+            };
+        }
+
+        // Annual income from the current salary + period inputs
+        function currentIncome() {
+            const salary = parseFloat($('salary').value) || 0;
+            return $('monthly').checked ? salary * 12 : salary;
+        }
+
+        // Maximum deductible retirement-fund contribution: lowest of 1/3 of assessable
+        // income, the actual contribution, or the annual ceiling. The ceiling is shared
+        // across approved funds (CIT, SSF, provident/gratuity) — NPR 500,000 for SSF
+        // participants, otherwise NPR 300,000. The two ceilings cannot be stacked.
+        function citCapFor(income, ssfEnabled) {
+            const ceiling = ssfEnabled ? 500000 : 300000;
+            return Math.max(0, Math.min(income / 3, ceiling));
+        }
+
+        function refreshCitMax() {
+            const hint = $('citMaxHint');
+            if (hint) hint.textContent = fmtNpr(citCapFor(currentIncome(), $('ssf').checked));
+        }
+
+        function renderOptimization(o) {
+            $('optMaxContrib').textContent = fmtNpr(o.citCap);
+            $('optTaxWithout').textContent = fmtNpr(o.baselineTax);
+            $('optTaxWith').textContent = fmtNpr(o.currentTax);
+
+            if (!o.citEnabled || o.citDeduction <= 0) {
+                const potentialTaxable = Math.max(0, o.income - (o.otherDeductions || 0) - o.citCap);
+                $('optSavingLabel').textContent = 'Potential Tax Saving';
+                $('optTaxable').textContent = fmtNpr(potentialTaxable);
+                $('optCash').textContent = fmtNpr(o.netIncome);
+                countUp($('optSaving'), o.maxSaving);
+                if (o.citCap <= 0) {
+                    $('optStatus').textContent = '—';
+                    $('optText').textContent = 'Enter your salary above to see how much you could save through the Citizen Investment Trust (CIT).';
+                } else if (o.maxSaving < 1) {
+                    $('optStatus').textContent = 'No benefit';
+                    $('optText').textContent = 'At your current income there is little or no income tax to offset, so a CIT contribution offers minimal tax benefit right now.';
+                } else {
+                    $('optStatus').textContent = 'Recommended';
+                    $('optText').textContent = `Contribute up to ${fmtNpr(o.citCap)} to the Citizen Investment Trust (CIT) to lower your taxable income to ${fmtNpr(potentialTaxable)} and save about ${fmtNpr(o.maxSaving)} in tax. Turn on CIT above to apply it.`;
+                }
+            } else {
+                $('optStatus').textContent = 'Applied';
+                $('optSavingLabel').textContent = 'Your Tax Saving';
+                $('optTaxable').textContent = fmtNpr(o.taxableIncome);
+                $('optCash').textContent = fmtNpr(o.netIncome - o.citDeduction);
+                countUp($('optSaving'), o.currentSaving);
+                const room = o.citCap - o.citDeduction;
+                if (room > 1) {
+                    const extra = o.maxSaving - o.currentSaving;
+                    $('optText').textContent = `You're contributing ${fmtNpr(o.citDeduction)} and saving ${fmtNpr(o.currentSaving)} in tax. Contribute the full ${fmtNpr(o.citCap)} (the maximum deductible) to save up to ${fmtNpr(o.maxSaving)} — an extra ${fmtNpr(extra)}.`;
+                } else {
+                    $('optText').textContent = `You're claiming the maximum CIT deduction (${fmtNpr(o.citDeduction)}) and saving ${fmtNpr(o.currentSaving)} in tax. This contribution stays your money — it's invested in the fund for your future.`;
+                }
+            }
+        }
     </script>
 
     <script type="application/ld+json">
@@ -902,7 +1182,7 @@
         "name": "How can I reduce my tax liability in Nepal?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "You can reduce your tax liability by: 1) Contributing to the Social Security Fund (SSF) to waive the 1% Social Security Tax, 2) Deducting life insurance premiums (up to NPR 25,000), 3) Deducting health insurance premiums (up to NPR 20,000), 4) Filing taxes jointly as a couple if married, 5) Contributing to approved retirement schemes, and 6) Claiming remote work allowance if applicable."
+          "text": "You can reduce your tax liability by: 1) Contributing to the Social Security Fund (SSF) to waive the 1% Social Security Tax, 2) Deducting life insurance premiums (up to NPR 40,000), 3) Deducting health insurance premiums (up to NPR 20,000), 4) Claiming the medical tax credit (lowest of NPR 1,500, 15% of medical expenses, or your tax liability), 5) Contributing to the Citizen Investment Trust or other approved retirement funds, 6) Filing taxes jointly as a couple if married, and 7) Claiming remote work allowance if applicable."
         }
       }, {
         "@type": "Question",
