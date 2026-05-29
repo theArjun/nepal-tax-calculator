@@ -286,14 +286,8 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         .kpi:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(15,23,42,0.09); }
-        .kpi.accent-danger  { border-top-color: var(--danger); }
-        .kpi.accent-success { border-top-color: var(--success); }
-        .kpi.accent-blue    { border-top-color: var(--blue); }
         .kpi .k-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
         .kpi .k-value { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.02em; margin-top: 0.4rem; color: var(--ink); }
-        .kpi.accent-danger .k-value  { color: var(--danger); }
-        .kpi.accent-success .k-value { color: var(--success); }
-        .kpi.accent-blue .k-value    { color: var(--blue); }
         .kpi .k-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.45rem; }
         .npr-mark { font-size: 0.62em; font-weight: 600; color: var(--muted); margin-right: 0.18em; vertical-align: 0.08em; }
 
@@ -389,16 +383,15 @@
         .cit-controls .btn-ghost strong { font-weight: 700; }
 
         /* Optimization card */
-        .opt-card { border-left: 3px solid var(--success); }
+        .opt-card { border-top: 3px solid var(--navy); }
         .opt-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 2rem; align-items: start; }
-        .opt-saving { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; color: var(--success); margin-top: 0.35rem; font-variant-numeric: tabular-nums; }
-        .opt-saving .npr-mark { color: #6ee7b7; }
+        .opt-saving { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; color: var(--navy); margin-top: 0.35rem; font-variant-numeric: tabular-nums; }
         .opt-text { margin-top: 0.85rem; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.55; }
         .opt-stats { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.4rem 1.1rem; }
         .opt-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.7rem 0; border-bottom: 1px dashed var(--border); font-size: 0.9rem; color: var(--muted); }
         .opt-row:last-child { border-bottom: none; }
         .opt-row strong { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-        .opt-row.highlight strong { color: var(--success); }
+        .opt-row.highlight strong { color: var(--navy); }
         .opt-note { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.82rem; line-height: 1.6; color: var(--muted); }
         .opt-note strong { color: var(--ink-soft); font-weight: 600; }
         @media (max-width: 900px) { .opt-grid { grid-template-columns: 1fr; gap: 1.25rem; } }
@@ -637,7 +630,7 @@
                     <div class="k-label">Tax Breakdown</div>
                     <div class="k-sub" style="margin-top:0.55rem; display:flex; justify-content:space-between;"><span>Income Tax</span><strong class="tnum" id="incomeTax" style="color:var(--ink);">NPR 0</strong></div>
                     <div class="k-sub" style="display:flex; justify-content:space-between;"><span>Social Security Tax</span><strong class="tnum" id="ssfTax" style="color:var(--ink);">NPR 0</strong></div>
-                    <div class="k-sub" id="medCreditRow" style="display:none; justify-content:space-between;"><span>Medical Tax Credit</span><strong class="tnum" id="medicalCredit" style="color:var(--success);">NPR 0</strong></div>
+                    <div class="k-sub" id="medCreditRow" style="display:none; justify-content:space-between;"><span>Medical Tax Credit</span><strong class="tnum" id="medicalCredit" style="color:var(--ink);">NPR 0</strong></div>
                 </div>
             </div>
 
@@ -986,7 +979,7 @@
                     <td><span class="rate-chip" data-rate="credit">Credit</span></td>
                     <td>Medical Tax Credit</td>
                     <td class="num">&mdash;</td>
-                    <td class="num" style="color:var(--success);">&minus;${fmtNpr(medicalCredit)}</td>
+                    <td class="num">&minus;${fmtNpr(medicalCredit)}</td>
                 `;
                 tbody.appendChild(tr);
             }
