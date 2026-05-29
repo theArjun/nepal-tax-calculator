@@ -815,6 +815,7 @@
 
     <script>
         const $ = (id) => document.getElementById(id);
+        let suppressScroll = false;
 
         $('monthly').addEventListener('change', () => {
             $('salary-hint').textContent = 'Monthly gross, before deductions';
@@ -858,6 +859,7 @@
         });
         $('citMaxBtn').addEventListener('click', () => {
             $('citAmount').value = Math.round(citCapFor(currentIncome(), $('ssf').checked));
+            syncUrl();
         });
         $('salary').addEventListener('input', refreshCitMax);
         $('monthly').addEventListener('change', refreshCitMax);
@@ -1026,7 +1028,8 @@
             $('recommendation').textContent = recommendationFor(income, totalTax, effectiveTaxRate, maritalStatus, ssf);
 
             setTimeout(() => {
-                $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                if (!suppressScroll) $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                suppressScroll = false;
             }, 80);
         });
 
@@ -1169,6 +1172,59 @@
                 }
             }
         }
+
+        // ---- URL state persistence (so a reload keeps your inputs) ----
+        function syncUrl() {
+            const p = new URLSearchParams();
+            if ($('salary').value) p.set('salary', $('salary').value);
+            if ($('yearly').checked) p.set('period', 'y');     // monthly is the default
+            if ($('couple').checked) p.set('status', 'c');     // individual is the default
+            if ($('ssf').checked) p.set('ssf', '1');
+            if ($('cit').checked) {
+                p.set('cit', '1');
+                if ($('citAmount').value) p.set('citAmt', $('citAmount').value);
+            }
+            if ($('lifePremium').value) p.set('life', $('lifePremium').value);
+            if ($('healthPremium').value) p.set('health', $('healthPremium').value);
+            if ($('medicalExpenses').value) p.set('medical', $('medicalExpenses').value);
+            const qs = p.toString();
+            try {
+                history.replaceState(null, '', qs ? `${location.pathname}?${qs}` : location.pathname);
+            } catch (e) { /* history API may be unavailable (e.g. file://) — ignore */ }
+        }
+
+        function restoreFromUrl() {
+            const p = new URLSearchParams(location.search);
+            if (![...p.keys()].length) return;
+
+            if (p.has('salary')) $('salary').value = p.get('salary');
+            if (p.get('period') === 'y') $('yearly').checked = true; else $('monthly').checked = true;
+            if (p.get('status') === 'c') $('couple').checked = true; else $('individual').checked = true;
+            $('ssf').checked = p.get('ssf') === '1';
+            $('cit').checked = p.get('cit') === '1';
+            if (p.has('citAmt')) $('citAmount').value = p.get('citAmt');
+            if (p.has('life')) $('lifePremium').value = p.get('life');
+            if (p.has('health')) $('healthPremium').value = p.get('health');
+            if (p.has('medical')) $('medicalExpenses').value = p.get('medical');
+
+            // Reflect dependent UI state for the restored values
+            $('salary-hint').textContent = $('yearly').checked
+                ? 'Yearly gross, before deductions' : 'Monthly gross, before deductions';
+            if ($('ssf').checked) { ssfToggle.classList.add('is-on'); ssfState.textContent = 'Enrolled'; }
+            if ($('cit').checked) { citToggle.classList.add('is-on'); citState.textContent = 'Yes'; citControls.hidden = false; }
+            refreshCitMax();
+
+            // Auto-calculate without yanking the viewport down to the results
+            if (parseFloat($('salary').value) > 0) { suppressScroll = true; $('calculate').click(); }
+        }
+
+        // Keep the URL in sync as the form changes
+        ['salary', 'citAmount', 'lifePremium', 'healthPremium', 'medicalExpenses']
+            .forEach((id) => $(id).addEventListener('input', syncUrl));
+        ['monthly', 'yearly', 'individual', 'couple', 'ssf', 'cit']
+            .forEach((id) => $(id).addEventListener('change', syncUrl));
+
+        restoreFromUrl();
     </script>
 
     <script type="application/ld+json">
