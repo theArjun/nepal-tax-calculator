@@ -605,17 +605,7 @@
     border-radius: 0.875rem;
     padding: 1.25rem;
     box-shadow: var(--shadow-sm);
-    border-top: 3px solid var(--navy);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  .kpi.accent-danger {
-    border-top-color: var(--danger);
-  }
-  .kpi.accent-success {
-    border-top-color: var(--success);
-  }
-  .kpi.accent-blue {
-    border-top-color: var(--blue);
   }
   .kpi:hover {
     transform: translateY(-2px);

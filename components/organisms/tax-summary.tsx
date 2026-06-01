@@ -23,7 +23,7 @@ export function TaxSummary({
       <SectionHead icon={<ChartIcon />} title={t("r.title")} meta={t("r.meta")} />
 
       <div className="kpi-grid">
-        <div className="kpi accent-danger">
+        <div className="kpi">
           <div className="k-label">{t("r.totalTax")}</div>
           <div className="k-value tnum">
             <span className="npr-mark">{t("cur")}</span>
@@ -35,7 +35,7 @@ export function TaxSummary({
           </div>
         </div>
 
-        <div className="kpi accent-success">
+        <div className="kpi">
           <div className="k-label">{t("r.netAnnual")}</div>
           <div className="k-value tnum">
             <span className="npr-mark">{t("cur")}</span>
@@ -50,7 +50,7 @@ export function TaxSummary({
           <div className="k-sub">{t("r.perMonth")}</div>
         </div>
 
-        <div className="kpi accent-blue">
+        <div className="kpi">
           <div className="k-label">{t("r.breakdown")}</div>
           <div className="k-sub" style={{ marginTop: "0.55rem", ...rowStyle }}>
             <span>{t("r.incomeTax")}</span>
