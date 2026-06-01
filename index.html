@@ -399,6 +399,15 @@
         .cit-controls .amount-input input { font-size: 1.25rem; }
         .cit-controls .btn-ghost { white-space: nowrap; align-self: stretch; }
         .cit-controls .btn-ghost strong { font-weight: 700; }
+        /* Stacked variant: amount field (+ optional period toggle) above a helper hint */
+        .cit-controls.stacked { flex-direction: column; align-items: stretch; gap: 0.45rem; }
+        .cit-controls.stacked .amount-input { flex: 1 1 auto; }
+        .cit-controls.stacked .hint { font-size: 0.78rem; color: var(--muted); line-height: 1.35; }
+        .basic-row { display: flex; gap: 0.5rem; align-items: stretch; }
+        .basic-row .amount-input { flex: 1; height: 52px; }
+        .basic-row .segmented.basic-period { height: 52px; width: auto; flex: 0 0 auto; }
+        .basic-row .segmented.basic-period label { padding: 0 0.85rem; font-size: 0.8rem; }
+        @media (max-width: 600px) { .basic-row { flex-direction: column; } .basic-row .segmented.basic-period { width: 100%; } }
 
         /* Optimization card */
         .opt-card { border-top: 3px solid var(--navy); }
@@ -614,14 +623,31 @@
                         <span class="lbl" data-i18n="f.ssf">Social Security Fund</span>
                         <span class="hint" data-i18n="f.ssfHint">Waives the 1% social security tax</span>
                     </div>
-                    <label class="ssf-toggle" id="ssf-toggle">
-                        <input type="checkbox" id="ssf">
-                        <span class="label-text" data-i18n="f.ssfLabel">SSF Participation</span>
-                        <span style="display:flex; align-items:center;">
-                            <span class="state" id="ssf-state">Not enrolled</span>
-                            <span class="knob" aria-hidden="true"></span>
-                        </span>
-                    </label>
+                    <div class="cit-panel">
+                        <label class="ssf-toggle" id="ssf-toggle">
+                            <input type="checkbox" id="ssf">
+                            <span class="label-text" data-i18n="f.ssfLabel">SSF Participation</span>
+                            <span style="display:flex; align-items:center;">
+                                <span class="state" id="ssf-state">Not enrolled</span>
+                                <span class="knob" aria-hidden="true"></span>
+                            </span>
+                        </label>
+                        <div class="cit-controls stacked" id="ssfBasicControls" hidden>
+                            <div class="basic-row">
+                                <div class="amount-input">
+                                    <span class="currency" data-i18n="cur">NPR</span>
+                                    <input type="number" id="basicSalary" placeholder="0" inputmode="numeric" aria-label="Basic salary">
+                                </div>
+                                <div class="segmented basic-period" role="radiogroup" aria-label="Basic salary period">
+                                    <input type="radio" id="basicMonthly" name="basic-period" value="monthly" checked>
+                                    <label for="basicMonthly" data-i18n="f.monthly">Monthly</label>
+                                    <input type="radio" id="basicYearly" name="basic-period" value="yearly">
+                                    <label for="basicYearly" data-i18n="f.yearly">Yearly</label>
+                                </div>
+                            </div>
+                            <span class="hint" data-i18n="f.basicHint">Basic salary &middot; SSF = 11% you + 20% company of this</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="field col-12">
@@ -767,8 +793,12 @@
                     </div>
                     <div class="opt-stats">
                         <div class="opt-row highlight"><span data-i18n="opt.recContrib">Recommended contribution</span><strong id="optMaxContrib">NPR 0</strong></div>
-                        <div class="opt-row"><span data-i18n="opt.depositYear">CIT deposit &middot; per year</span><strong id="optDepositYear">NPR 0</strong></div>
-                        <div class="opt-row"><span data-i18n="opt.depositMonth">CIT deposit &middot; per month</span><strong id="optDepositMonth">NPR 0</strong></div>
+                        <div id="optSsfBreakdown" hidden>
+                            <div class="opt-row"><span data-i18n="opt.ssfYouPay">SSF &middot; you pay (11%)</span><strong id="optSsfYou">NPR 0</strong></div>
+                            <div class="opt-row"><span data-i18n="opt.ssfCompanyPays">SSF &middot; company pays (20%)</span><strong id="optSsfCompany">NPR 0</strong></div>
+                        </div>
+                        <div class="opt-row"><span id="optDepositYearLabel" data-i18n="opt.depositYear">CIT deposit &middot; per year</span><strong id="optDepositYear">NPR 0</strong></div>
+                        <div class="opt-row"><span id="optDepositMonthLabel" data-i18n="opt.depositMonth">CIT deposit &middot; per month</span><strong id="optDepositMonth">NPR 0</strong></div>
                         <div class="opt-row"><span data-i18n="opt.taxable">Taxable income after CIT</span><strong id="optTaxable">NPR 0</strong></div>
                         <div class="opt-row"><span data-i18n="opt.without">Tax without CIT</span><strong id="optTaxWithout">NPR 0</strong></div>
                         <div class="opt-row"><span data-i18n="opt.with">Tax with CIT</span><strong id="optTaxWith">NPR 0</strong></div>
@@ -1007,6 +1037,7 @@
             'f.filing': 'दाखिला स्थिति', 'f.filingHint': 'दम्पतीलाई बढी पहिलो खुड्किलो',
             'f.individual': 'व्यक्तिगत', 'f.couple': 'दम्पती (संयुक्त)',
             'f.ssf': 'सामाजिक सुरक्षा कोष', 'f.ssfHint': '१% सामाजिक सुरक्षा कर छुट गराउँछ', 'f.ssfLabel': 'SSF सहभागिता',
+            'f.basicHint': 'आधारभूत तलब · SSF = यसको ११% तपाईं + २०% कम्पनी',
             'f.cit': 'नागरिक लगानी कोष (CIT)', 'f.citHint': 'आयको ⅓ सम्म, बढीमा रु ३,००,००० (SSF भए रु ५,००,०००) कट्टी',
             'f.citLabel': 'अधिकतम कर लाभका लागि CIT मा योगदान गर्नुहोस्', 'f.useMax': 'अधिकतम प्रयोग',
             'f.insMed': 'बीमा र चिकित्सा', 'f.insMedHint': 'वैकल्पिक · कर अझ घटाउँछ',
@@ -1021,6 +1052,7 @@
             'cmp.title': 'बजेट तुलना', 'cmp.net': 'खुद वार्षिक आय', 'cmp.rate': 'प्रभावकारी कर दर', 'cmp.selected': 'रोजिएको',
             'opt.title': 'कर अनुकूलन — नागरिक लगानी कोष',
             'opt.recContrib': 'सिफारिस गरिएको योगदान', 'opt.depositYear': 'CIT जम्मा · वार्षिक', 'opt.depositMonth': 'CIT जम्मा · मासिक',
+            'opt.ssfYouPay': 'SSF · तपाईंले तिर्ने (११%)', 'opt.ssfCompanyPays': 'SSF · कम्पनीले तिर्ने (२०%)',
             'opt.taxable': 'CIT पछि करयोग्य आय', 'opt.without': 'CIT बिना कर', 'opt.with': 'CIT सहित कर',
             'opt.takeYear': 'हातमा · वार्षिक', 'opt.takeMonth': 'हातमा · मासिक',
             'opt.note': '<strong>कट्टी सीमा कसरी काम गर्छ:</strong> स्वीकृत निवृत्ति कोष — CIT, SSF, र सञ्चय/उपदान कोष — को कट्टी संयुक्त रूपमा गणना हुन्छ। कट्टी रकम निर्धारणयोग्य आयको एक-तिहाइ, तपाईंको वास्तविक योगदान, वा वार्षिक <strong>रु ३,००,०००</strong> — यीमध्ये सबैभन्दा कम हुन्छ। सामाजिक सुरक्षा कोष (SSF) सहभागीलाई <strong>रु ५,००,०००</strong> को उच्च सीमा हुन्छ। यी दुई सीमा एकैसाथ जोड्न मिल्दैन।',
@@ -1059,6 +1091,8 @@
         };
         const MSG = {
             'hero.fyPrefix': { en: 'Fiscal Year', ne: 'आर्थिक वर्ष' },
+            'opt.citTopupYear': { en: 'CIT top-up · per year', ne: 'CIT थप जम्मा · वार्षिक' },
+            'opt.citTopupMonth': { en: 'CIT top-up · per month', ne: 'CIT थप जम्मा · मासिक' },
             'r.onIncome': { en: 'on income of {amt}', ne: '{amt} आयमा' },
             'led.credit': { en: 'Credit', ne: 'क्रेडिट' },
             'slab.0': { en: 'First Slab', ne: 'पहिलो खुड्किलो' },
@@ -1150,10 +1184,16 @@
         const ssfToggle = $('ssf-toggle');
         const ssfInput = $('ssf');
         const ssfState = $('ssf-state');
+        const ssfBasicControls = $('ssfBasicControls');
         ssfInput.addEventListener('change', () => {
             ssfToggle.classList.toggle('is-on', ssfInput.checked);
+            ssfBasicControls.hidden = !ssfInput.checked;
             updateSsfState();
+            refreshCitMax();
         });
+        $('basicSalary').addEventListener('input', () => { refreshCitMax(); syncUrl(); });
+        $('basicMonthly').addEventListener('change', () => { refreshCitMax(); syncUrl(); });
+        $('basicYearly').addEventListener('change', () => { refreshCitMax(); syncUrl(); });
 
         // Citizen Investment Trust (CIT) controls
         const citToggle = $('cit-toggle');
@@ -1166,7 +1206,7 @@
                 citControls.hidden = false;
                 refreshCitMax();
                 if (!parseFloat($('citAmount').value)) {
-                    $('citAmount').value = Math.round(citCapFor(currentIncome(), $('ssf').checked));
+                    $('citAmount').value = Math.round(citRoomFor(currentIncome(), $('ssf').checked));
                 }
             } else {
                 citToggle.classList.remove('is-on');
@@ -1175,7 +1215,7 @@
             updateCitState();
         });
         $('citMaxBtn').addEventListener('click', () => {
-            $('citAmount').value = Math.round(citCapFor(currentIncome(), $('ssf').checked));
+            $('citAmount').value = Math.round(citRoomFor(currentIncome(), $('ssf').checked));
             syncUrl();
         });
         $('salary').addEventListener('input', refreshCitMax);
@@ -1227,13 +1267,19 @@
             const healthDeduction = Math.min(healthPremium, 20000); // up to NPR 20,000
             const otherDeductions = lifeDeduction + healthDeduction;
 
+            // SSF contributions (employee 11% + employer 20% of basic salary) share the retirement
+            // ceiling with CIT; they fill it first, so CIT only tops up the remaining room.
+            const ssfC = ssfContribFor(ssf);
+            const citCap = citCapFor(income, ssf);
+            const ssfDeductible = Math.min(ssfC.total, citCap);
+            const citRoom = Math.max(0, citCap - ssfDeductible);
+
             // Citizen Investment Trust (CIT)
             const citEnabled = $('cit').checked;
-            const citCap = citCapFor(income, ssf);
             const citContribution = citEnabled ? (parseFloat($('citAmount').value) || 0) : 0;
-            const citDeduction = Math.min(citContribution, citCap);
+            const citDeduction = Math.min(citContribution, citRoom);
 
-            const totalDeductions = otherDeductions + citDeduction;
+            const totalDeductions = otherDeductions + ssfDeductible + citDeduction;
             const taxableIncome = Math.max(0, income - totalDeductions);
 
             const current = taxAfter(income, totalDeductions, brackets, ssf, medicalExpenses);
@@ -1246,12 +1292,14 @@
             const monthlyNetIncome = netIncome / 12;
             const effectiveTaxRate = income > 0 ? (totalTax / income) * 100 : 0;
 
-            // CIT optimization (isolates CIT benefit; other reliefs held constant)
+            // Optimization: isolate the retirement-fund benefit (other reliefs held constant).
+            // The baseline excludes SSF + CIT; "with max" deducts the full shared ceiling.
             const baseNoCit  = taxAfter(income, otherDeductions, brackets, ssf, medicalExpenses).totalTax;
             const withMaxCit = taxAfter(income, otherDeductions + citCap, brackets, ssf, medicalExpenses).totalTax;
             const maxSaving = baseNoCit - withMaxCit;
             const currentSaving = baseNoCit - totalTax;
-            renderOptimization({ citEnabled, income, citCap, citDeduction, taxableIncome, otherDeductions,
+            renderOptimization({ citEnabled, income, citCap, citDeduction, citRoom, taxableIncome, otherDeductions,
+                ssfEmployee: ssfC.employee, ssfEmployer: ssfC.employer, ssfDeductible,
                 baselineTax: baseNoCit, currentTax: totalTax, withMaxCit, netIncome, maxSaving, currentSaving });
 
             // Year-on-year comparison: same income/deductions/SSF, each year's own slabs
@@ -1462,21 +1510,52 @@
             return Math.max(0, Math.min(income / 3, ceiling));
         }
 
+        // Annual SSF contributions from basic salary: employee 11% + employer 20% (= 31% total).
+        // Returns zeroes unless SSF is on and a basic salary is provided.
+        function ssfContribFor(ssfEnabled) {
+            const raw = parseFloat($('basicSalary').value) || 0;
+            const basicAnnual = $('basicMonthly').checked ? raw * 12 : raw;
+            if (!ssfEnabled || basicAnnual <= 0) return { basicAnnual: 0, employee: 0, employer: 0, total: 0 };
+            return { basicAnnual, employee: basicAnnual * 0.11, employer: basicAnnual * 0.20, total: basicAnnual * 0.31 };
+        }
+
+        // CIT top-up room: the shared retirement ceiling minus what SSF contributions already fill.
+        // With no basic salary (or SSF off) this is the full ceiling — i.e. unchanged behaviour.
+        function citRoomFor(income, ssfEnabled) {
+            const ceiling = citCapFor(income, ssfEnabled);
+            const ssfDeductible = Math.min(ssfContribFor(ssfEnabled).total, ceiling);
+            return Math.max(0, ceiling - ssfDeductible);
+        }
+
         function refreshCitMax() {
             const hint = $('citMaxHint');
-            if (hint) hint.textContent = fmtNpr(citCapFor(currentIncome(), $('ssf').checked));
+            if (hint) hint.textContent = fmtNpr(citRoomFor(currentIncome(), $('ssf').checked));
         }
 
         function renderOptimization(o) {
             const applied = o.citEnabled && o.citDeduction > 0;
-            const maxDeposit = Math.min(o.citCap, Math.max(0, o.income - (o.otherDeductions || 0)));
+            const ssfActive = (o.ssfDeductible || 0) > 0;
+            // CIT only tops up whatever room SSF leaves in the shared ceiling.
+            const citRoom = o.citRoom != null ? o.citRoom : o.citCap;
+            const maxDeposit = Math.min(citRoom, Math.max(0, o.income - (o.otherDeductions || 0) - (o.ssfDeductible || 0)));
 
             // Applied -> show actual figures; otherwise -> preview the recommended (max) scenario
             const deposit = applied ? o.citDeduction : maxDeposit;
             const taxWith = applied ? o.currentTax : o.withMaxCit;
             const taxable = applied ? o.taxableIncome : Math.max(0, o.income - (o.otherDeductions || 0) - o.citCap);
-            const cashYear = (o.income - taxWith) - deposit;
+            // Take-home = after-tax income minus what YOU set aside (CIT deposit + your 11% SSF share).
+            const cashYear = (o.income - taxWith) - deposit - (o.ssfEmployee || 0);
             const saving = applied ? o.currentSaving : o.maxSaving;
+
+            // SSF you-pay / company-pays breakdown of the shared ceiling
+            $('optSsfBreakdown').hidden = !ssfActive;
+            if (ssfActive) {
+                $('optSsfYou').textContent = fmtNpr(o.ssfEmployee);
+                $('optSsfCompany').textContent = fmtNpr(o.ssfEmployer);
+            }
+            // When SSF fills part of the ceiling, the CIT rows are a top-up, not the whole deposit
+            $('optDepositYearLabel').textContent = t(ssfActive ? 'opt.citTopupYear' : 'opt.depositYear');
+            $('optDepositMonthLabel').textContent = t(ssfActive ? 'opt.citTopupMonth' : 'opt.depositMonth');
 
             $('optMaxContrib').textContent = fmtNpr(o.citCap);
             $('optDepositYear').textContent = fmtNpr(deposit);
@@ -1552,6 +1631,8 @@
             if ($('yearly').checked) p.set('period', 'y');     // monthly is the default
             if ($('couple').checked) p.set('status', 'c');     // individual is the default
             if ($('ssf').checked) p.set('ssf', '1');
+            if ($('basicSalary').value) p.set('basic', $('basicSalary').value);
+            if ($('basicYearly').checked) p.set('basicP', 'y');   // monthly is the default
             if ($('cit').checked) {
                 p.set('cit', '1');
                 if ($('citAmount').value) p.set('citAmt', $('citAmount').value);
@@ -1576,6 +1657,8 @@
             if (p.get('period') === 'y') $('yearly').checked = true; else $('monthly').checked = true;
             if (p.get('status') === 'c') $('couple').checked = true; else $('individual').checked = true;
             $('ssf').checked = p.get('ssf') === '1';
+            if (p.has('basic')) $('basicSalary').value = p.get('basic');
+            if (p.get('basicP') === 'y') $('basicYearly').checked = true; else $('basicMonthly').checked = true;
             $('cit').checked = p.get('cit') === '1';
             if (p.has('citAmt')) $('citAmount').value = p.get('citAmt');
             if (p.has('life')) $('lifePremium').value = p.get('life');
@@ -1584,7 +1667,7 @@
 
             // Reflect dependent UI state for the restored values
             updateSalaryHint();
-            if ($('ssf').checked) ssfToggle.classList.add('is-on');
+            if ($('ssf').checked) { ssfToggle.classList.add('is-on'); ssfBasicControls.hidden = false; }
             updateSsfState();
             if ($('cit').checked) { citToggle.classList.add('is-on'); citControls.hidden = false; }
             updateCitState();
