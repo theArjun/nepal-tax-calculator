@@ -9,7 +9,7 @@ export function Faq() {
   const { t } = useI18n();
 
   return (
-    <section className="faq">
+    <section className="section faq">
       <SectionHead icon={<QuestionIcon />} title={t("faq.title")} />
 
       <FaqItem question={t("faq.q1")}>
