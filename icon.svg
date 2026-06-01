@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Nepal Tax Calculator">
+  <rect width="512" height="512" rx="104" fill="#1e3a5f"/>
+  <g fill="none" stroke="#ffffff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M116 396h280"/>
+    <path d="M152 396V214l104-58 104 58v182"/>
+    <path d="M212 396v-86h88v86"/>
+  </g>
+</svg>

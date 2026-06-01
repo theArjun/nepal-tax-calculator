@@ -38,6 +38,8 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3a5f">
 
     <style>
@@ -119,6 +121,11 @@
             border: 1px solid rgba(147, 197, 253, 0.35);
             white-space: nowrap;
         }
+        .appbar-right { display: flex; align-items: center; gap: 0.6rem; }
+        .lang-toggle { display: inline-flex; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 9999px; overflow: hidden; }
+        .lang-toggle button { background: transparent; color: #cbd5e1; border: none; padding: 0.3rem 0.7rem; font-family: inherit; font-size: 0.74rem; font-weight: 600; cursor: pointer; line-height: 1.2; transition: background 0.15s ease, color 0.15s ease; }
+        .lang-toggle button.active { background: rgba(255, 255, 255, 0.18); color: #fff; }
+        @media (max-width: 600px) { .lang-toggle button { padding: 0.28rem 0.55rem; font-size: 0.7rem; } .fy-pill { display: none; } }
 
         .page { max-width: 1180px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
 
@@ -407,6 +414,32 @@
         .opt-note strong { color: var(--ink-soft); font-weight: 600; }
         @media (max-width: 900px) { .opt-grid { grid-template-columns: 1fr; gap: 1.25rem; } }
 
+        /* Year-on-year comparison */
+        .cmp-card { border-top: 3px solid var(--blue); }
+        .cmp-banner { background: var(--blue-soft); border: 1px solid #bfdbfe; border-radius: 0.75rem; padding: 0.9rem 1.1rem; font-size: 0.98rem; font-weight: 600; color: var(--navy); margin-bottom: 1.25rem; line-height: 1.5; }
+        .cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .cmp-col { border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.1rem 1.25rem; transition: border-color 0.2s ease; }
+        .cmp-col.is-active { border-color: var(--navy); box-shadow: inset 0 0 0 1px var(--navy); }
+        .cmp-year { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
+        .cmp-col.is-active .cmp-year { color: var(--navy); }
+        .cmp-year .tag { font-size: 0.62rem; padding: 0.1rem 0.45rem; border-radius: 9999px; background: var(--navy); color: #fff; letter-spacing: 0.04em; }
+        .cmp-tax { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); margin: 0.35rem 0 0.75rem; }
+        .cmp-row { display: flex; justify-content: space-between; gap: 0.75rem; font-size: 0.85rem; color: var(--muted); padding: 0.4rem 0; border-top: 1px dashed var(--border); }
+        .cmp-row strong { color: var(--ink); font-weight: 600; }
+        @media (max-width: 600px) { .cmp-grid { grid-template-columns: 1fr; } }
+
+        /* FAQ */
+        .faq details { background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem; margin-bottom: 0.75rem; box-shadow: var(--shadow-sm); }
+        .faq summary { cursor: pointer; list-style: none; padding: 1.1rem 1.25rem; font-weight: 600; color: var(--navy); display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        .faq summary::-webkit-details-marker { display: none; }
+        .faq summary::after { content: "+"; font-size: 1.35rem; font-weight: 400; color: var(--muted); line-height: 1; }
+        .faq details[open] > summary::after { content: "\2212"; }
+        .faq details[open] > summary { border-bottom: 1px solid var(--border); }
+        .faq .faq-body { padding: 1rem 1.25rem 1.25rem; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.6; }
+        .faq .faq-body table { width: 100%; border-collapse: collapse; margin-top: 0.7rem; font-size: 0.88rem; }
+        .faq .faq-body th, .faq .faq-body td { text-align: left; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .faq .faq-body th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.04em; }
+
         /* Footer */
         .footer {
             margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border);
@@ -493,11 +526,17 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6"/></svg>
                 </span>
                 <div>
-                    <div class="name">Nepal Tax Calculator</div>
-                    <div class="sub">Income Tax &middot; Inland Revenue Department</div>
+                    <div class="name" data-i18n="app.name">Nepal Tax Calculator</div>
+                    <div class="sub" data-i18n="app.sub">Income Tax &middot; Inland Revenue Department</div>
                 </div>
             </div>
-            <span class="fy-pill" id="fyPill">FY 2083-84</span>
+            <div class="appbar-right">
+                <div class="lang-toggle" role="group" aria-label="Language">
+                    <button type="button" id="langEn" class="active" aria-label="English">EN</button>
+                    <button type="button" id="langNe" aria-label="Nepali" lang="ne">नेपाली</button>
+                </div>
+                <span class="fy-pill" id="fyPill">FY 2083-84</span>
+            </div>
         </div>
     </header>
 
@@ -505,8 +544,8 @@
         <!-- Hero -->
         <section class="hero">
             <div class="eyebrow" id="heroFy">Fiscal Year 2083&ndash;84</div>
-            <h1>Calculate Your Income Tax</h1>
-            <p>Estimate your Nepal income tax liability against the <strong id="heroFyStrong">FY 2083&ndash;84 tax slabs</strong> set by the Inland Revenue Department. Supports individual and joint (couple) filing and Social Security Fund participation.</p>
+            <h1 data-i18n="hero.h1">Calculate Your Income Tax</h1>
+            <p data-i18n="hero.desc">Estimate your Nepal income tax liability against the latest Inland Revenue Department slabs — with deductions, CIT optimization, and a year-on-year budget comparison.</p>
         </section>
 
         <!-- Income details -->
@@ -515,15 +554,15 @@
                 <span class="icon" aria-hidden="true">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
                 </span>
-                <h2>Income Details</h2>
-                <span class="meta">Step 1 of 2</span>
+                <h2 data-i18n="form.title">Income Details</h2>
+                <span class="meta" data-i18n="form.step">Step 1 of 2</span>
             </div>
 
             <div class="form-grid">
                 <div class="field col-12">
                     <div class="field-label">
-                        <span class="lbl">Fiscal Year</span>
-                        <span class="hint">Tax slabs differ by year</span>
+                        <span class="lbl" data-i18n="f.fy">Fiscal Year</span>
+                        <span class="hint" data-i18n="f.fyHint">Tax slabs differ by year</span>
                     </div>
                     <div class="segmented" role="radiogroup" aria-label="Fiscal year">
                         <input type="radio" id="fy2083" name="fiscal-year" value="2083-84" checked>
@@ -535,49 +574,49 @@
 
                 <div class="field col-7">
                     <div class="field-label">
-                        <span class="lbl">Salary</span>
+                        <span class="lbl" data-i18n="f.salary">Salary</span>
                         <span class="hint" id="salary-hint">Monthly gross, before deductions</span>
                     </div>
                     <div class="amount-input">
-                        <span class="currency">NPR</span>
+                        <span class="currency" data-i18n="cur">NPR</span>
                         <input type="number" id="salary" placeholder="0" aria-label="Salary amount in NPR" inputmode="numeric">
                     </div>
                 </div>
 
                 <div class="field col-5">
                     <div class="field-label">
-                        <span class="lbl">Income Period</span>
-                        <span class="hint">How this figure is reported</span>
+                        <span class="lbl" data-i18n="f.period">Income Period</span>
+                        <span class="hint" data-i18n="f.periodHint">How this figure is reported</span>
                     </div>
                     <div class="segmented" role="radiogroup" aria-label="Income period">
                         <input type="radio" id="monthly" name="income-period" value="monthly" checked>
-                        <label for="monthly">Monthly</label>
+                        <label for="monthly" data-i18n="f.monthly">Monthly</label>
                         <input type="radio" id="yearly" name="income-period" value="yearly">
-                        <label for="yearly">Yearly</label>
+                        <label for="yearly" data-i18n="f.yearly">Yearly</label>
                     </div>
                 </div>
 
                 <div class="field col-6" id="filingField">
                     <div class="field-label">
-                        <span class="lbl">Filing Status</span>
-                        <span class="hint">Couples get a higher first slab</span>
+                        <span class="lbl" data-i18n="f.filing">Filing Status</span>
+                        <span class="hint" data-i18n="f.filingHint">Couples get a higher first slab</span>
                     </div>
                     <div class="segmented" role="radiogroup" aria-label="Filing status">
                         <input type="radio" id="individual" name="marital" value="individual" checked>
-                        <label for="individual">Individual</label>
+                        <label for="individual" data-i18n="f.individual">Individual</label>
                         <input type="radio" id="couple" name="marital" value="couple">
-                        <label for="couple">Couple (Joint)</label>
+                        <label for="couple" data-i18n="f.couple">Couple (Joint)</label>
                     </div>
                 </div>
 
                 <div class="field col-6" id="ssfField">
                     <div class="field-label">
-                        <span class="lbl">Social Security Fund</span>
-                        <span class="hint">Waives the 1% social security tax</span>
+                        <span class="lbl" data-i18n="f.ssf">Social Security Fund</span>
+                        <span class="hint" data-i18n="f.ssfHint">Waives the 1% social security tax</span>
                     </div>
                     <label class="ssf-toggle" id="ssf-toggle">
                         <input type="checkbox" id="ssf">
-                        <span class="label-text">SSF Participation</span>
+                        <span class="label-text" data-i18n="f.ssfLabel">SSF Participation</span>
                         <span style="display:flex; align-items:center;">
                             <span class="state" id="ssf-state">Not enrolled</span>
                             <span class="knob" aria-hidden="true"></span>
@@ -587,13 +626,13 @@
 
                 <div class="field col-12">
                     <div class="field-label">
-                        <span class="lbl">Citizen Investment Trust (CIT)</span>
-                        <span class="hint">Deductible up to &#8531; of income, capped at NPR 300,000 (NPR 500,000 with SSF)</span>
+                        <span class="lbl" data-i18n="f.cit">Citizen Investment Trust (CIT)</span>
+                        <span class="hint" data-i18n="f.citHint">Deductible up to ⅓ of income, capped at NPR 300,000 (NPR 500,000 with SSF)</span>
                     </div>
                     <div class="cit-panel">
                         <label class="ssf-toggle" id="cit-toggle">
                             <input type="checkbox" id="cit">
-                            <span class="label-text">Contribute to CIT for maximum tax benefit</span>
+                            <span class="label-text" data-i18n="f.citLabel">Contribute to CIT for maximum tax benefit</span>
                             <span style="display:flex; align-items:center;">
                                 <span class="state" id="cit-state">No</span>
                                 <span class="knob" aria-hidden="true"></span>
@@ -601,57 +640,57 @@
                         </label>
                         <div class="cit-controls" id="cit-controls" hidden>
                             <div class="amount-input">
-                                <span class="currency">NPR</span>
+                                <span class="currency" data-i18n="cur">NPR</span>
                                 <input type="number" id="citAmount" placeholder="0" inputmode="numeric" aria-label="Annual CIT contribution">
                             </div>
-                            <button type="button" class="btn btn-ghost" id="citMaxBtn">Use max (<strong id="citMaxHint">NPR 0</strong>)</button>
+                            <button type="button" class="btn btn-ghost" id="citMaxBtn"><span data-i18n="f.useMax">Use max</span> (<strong id="citMaxHint">NPR 0</strong>)</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-subhead">
-                    <span class="title">Insurance &amp; Medical</span>
-                    <span class="optional">Optional &middot; further reduces your tax</span>
+                    <span class="title" data-i18n="f.insMed">Insurance &amp; Medical</span>
+                    <span class="optional" data-i18n="f.insMedHint">Optional &middot; further reduces your tax</span>
                 </div>
 
                 <div class="field col-4">
                     <div class="field-label">
-                        <span class="lbl">Life Insurance Premium</span>
-                        <span class="hint">Annual premium &mdash; deductible up to NPR 40,000</span>
+                        <span class="lbl" data-i18n="f.life">Life Insurance Premium</span>
+                        <span class="hint" data-i18n="f.lifeHint">Annual premium &mdash; deductible up to NPR 40,000</span>
                     </div>
                     <div class="amount-input">
-                        <span class="currency">NPR</span>
+                        <span class="currency" data-i18n="cur">NPR</span>
                         <input type="number" id="lifePremium" placeholder="0" inputmode="numeric" aria-label="Annual life insurance premium">
                     </div>
                 </div>
 
                 <div class="field col-4">
                     <div class="field-label">
-                        <span class="lbl">Health Insurance Premium</span>
-                        <span class="hint">Annual premium &mdash; deductible up to NPR 20,000</span>
+                        <span class="lbl" data-i18n="f.health">Health Insurance Premium</span>
+                        <span class="hint" data-i18n="f.healthHint">Annual premium &mdash; deductible up to NPR 20,000</span>
                     </div>
                     <div class="amount-input">
-                        <span class="currency">NPR</span>
+                        <span class="currency" data-i18n="cur">NPR</span>
                         <input type="number" id="healthPremium" placeholder="0" inputmode="numeric" aria-label="Annual health insurance premium">
                     </div>
                 </div>
 
                 <div class="field col-4">
                     <div class="field-label">
-                        <span class="lbl">Medical Expenses</span>
-                        <span class="hint">Medical tax credit &mdash; 15%, up to NPR 1,500</span>
+                        <span class="lbl" data-i18n="f.medical">Medical Expenses</span>
+                        <span class="hint" data-i18n="f.medicalHint">Medical tax credit &mdash; 15%, up to NPR 1,500</span>
                     </div>
                     <div class="amount-input">
-                        <span class="currency">NPR</span>
+                        <span class="currency" data-i18n="cur">NPR</span>
                         <input type="number" id="medicalExpenses" placeholder="0" inputmode="numeric" aria-label="Annual medical expenses">
                     </div>
                 </div>
             </div>
 
             <div class="calc-row">
-                <p class="calc-note">Figures are calculated against the <span id="calcNoteFy">FY 2083&ndash;84</span> tax slabs. Fill in your details and calculate.</p>
+                <p class="calc-note" data-i18n="f.calcNote">Figures use the selected fiscal year's tax slabs. Fill in your details and calculate.</p>
                 <button class="btn" id="calculate" type="button">
-                    Calculate Tax
+                    <span data-i18n="f.calcBtn">Calculate Tax</span>
                     <svg width="16" height="14" viewBox="0 0 16 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 7h12M9 3l4 4-4 4"/></svg>
                 </button>
             </div>
@@ -663,58 +702,81 @@
                 <span class="icon" aria-hidden="true">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-9"/></svg>
                 </span>
-                <h2>Tax Summary</h2>
-                <span class="meta">Annualised</span>
+                <h2 data-i18n="r.title">Tax Summary</h2>
+                <span class="meta" data-i18n="r.meta">Annualised</span>
             </div>
 
             <div class="kpi-grid">
                 <div class="kpi accent-danger">
-                    <div class="k-label">Total Tax Payable</div>
-                    <div class="k-value tnum"><span class="npr-mark">NPR</span><span id="totalTax">0</span></div>
-                    <div class="k-sub"><span id="effRatePill">0.00%</span> effective &middot; <span id="verdictNote">on income of NPR 0</span></div>
+                    <div class="k-label" data-i18n="r.totalTax">Total Tax Payable</div>
+                    <div class="k-value tnum"><span class="npr-mark" data-i18n="cur">NPR</span><span id="totalTax">0</span></div>
+                    <div class="k-sub"><span id="effRatePill">0.00%</span> <span data-i18n="r.effective">effective</span> &middot; <span id="verdictNote">on income of NPR 0</span></div>
                 </div>
                 <div class="kpi accent-success">
-                    <div class="k-label">Net Annual Income</div>
-                    <div class="k-value tnum"><span class="npr-mark">NPR</span><span id="netIncome">0</span></div>
-                    <div class="k-sub">After all taxes</div>
+                    <div class="k-label" data-i18n="r.netAnnual">Net Annual Income</div>
+                    <div class="k-value tnum"><span class="npr-mark" data-i18n="cur">NPR</span><span id="netIncome">0</span></div>
+                    <div class="k-sub" data-i18n="r.afterTax">After all taxes</div>
                 </div>
                 <div class="kpi">
-                    <div class="k-label">Net Monthly Income</div>
+                    <div class="k-label" data-i18n="r.netMonthly">Net Monthly Income</div>
                     <div class="k-value tnum" id="monthlyNetIncome">NPR 0</div>
-                    <div class="k-sub">Take-home per month</div>
+                    <div class="k-sub" data-i18n="r.perMonth">Take-home per month</div>
                 </div>
                 <div class="kpi accent-blue">
-                    <div class="k-label">Tax Breakdown</div>
-                    <div class="k-sub" style="margin-top:0.55rem; display:flex; justify-content:space-between;"><span>Income Tax</span><strong class="tnum" id="incomeTax" style="color:var(--ink);">NPR 0</strong></div>
-                    <div class="k-sub" style="display:flex; justify-content:space-between;"><span>Social Security Tax</span><strong class="tnum" id="ssfTax" style="color:var(--ink);">NPR 0</strong></div>
-                    <div class="k-sub" id="medCreditRow" style="display:none; justify-content:space-between;"><span>Medical Tax Credit</span><strong class="tnum" id="medicalCredit" style="color:var(--ink);">NPR 0</strong></div>
+                    <div class="k-label" data-i18n="r.breakdown">Tax Breakdown</div>
+                    <div class="k-sub" style="margin-top:0.55rem; display:flex; justify-content:space-between;"><span data-i18n="r.incomeTax">Income Tax</span><strong class="tnum" id="incomeTax" style="color:var(--ink);">NPR 0</strong></div>
+                    <div class="k-sub" style="display:flex; justify-content:space-between;"><span data-i18n="r.ssfTax">Social Security Tax</span><strong class="tnum" id="ssfTax" style="color:var(--ink);">NPR 0</strong></div>
+                    <div class="k-sub" id="medCreditRow" style="display:none; justify-content:space-between;"><span data-i18n="r.medCredit">Medical Tax Credit</span><strong class="tnum" id="medicalCredit" style="color:var(--ink);">NPR 0</strong></div>
+                </div>
+            </div>
+
+            <!-- Year-on-year comparison -->
+            <div class="card card-pad cmp-card" id="cmpCard" style="margin-bottom:1.5rem;">
+                <div class="subhead">
+                    <h3 data-i18n="cmp.title">Budget Comparison</h3>
+                    <span class="meta">FY 2082-83 vs 2083-84</span>
+                </div>
+                <div class="cmp-banner" id="cmpDelta">—</div>
+                <div class="cmp-grid">
+                    <div class="cmp-col" id="cmp82Col">
+                        <div class="cmp-year">FY 2082-83 <span class="tag" id="cmp82Tag" style="display:none" data-i18n="cmp.selected">Selected</span></div>
+                        <div class="cmp-tax tnum"><span class="npr-mark" data-i18n="cur">NPR</span> <span id="cmp82Tax">0</span></div>
+                        <div class="cmp-row"><span data-i18n="cmp.net">Net annual income</span><strong class="tnum" id="cmp82Net">NPR 0</strong></div>
+                        <div class="cmp-row"><span data-i18n="cmp.rate">Effective tax rate</span><strong id="cmp82Rate">0%</strong></div>
+                    </div>
+                    <div class="cmp-col" id="cmp83Col">
+                        <div class="cmp-year">FY 2083-84 <span class="tag" id="cmp83Tag" style="display:none" data-i18n="cmp.selected">Selected</span></div>
+                        <div class="cmp-tax tnum"><span class="npr-mark" data-i18n="cur">NPR</span> <span id="cmp83Tax">0</span></div>
+                        <div class="cmp-row"><span data-i18n="cmp.net">Net annual income</span><strong class="tnum" id="cmp83Net">NPR 0</strong></div>
+                        <div class="cmp-row"><span data-i18n="cmp.rate">Effective tax rate</span><strong id="cmp83Rate">0%</strong></div>
+                    </div>
                 </div>
             </div>
 
             <!-- Tax optimization -->
             <div class="card card-pad opt-card" id="optCard" style="margin-bottom:1.5rem;">
                 <div class="subhead">
-                    <h3>Tax Optimization &mdash; Citizen Investment Trust</h3>
-                    <span class="meta" id="optStatus">Recommended</span>
+                    <h3 data-i18n="opt.title">Tax Optimization &mdash; Citizen Investment Trust</h3>
+                    <span class="meta" id="optStatus" data-i18n="opt.recommended">Recommended</span>
                 </div>
                 <div class="opt-grid">
                     <div>
-                        <div class="k-label" id="optSavingLabel">Potential Tax Saving</div>
-                        <div class="opt-saving tnum"><span class="npr-mark">NPR</span><span id="optSaving">0</span></div>
-                        <p class="opt-text" id="optText">Enter your salary and calculate to see your CIT tax-saving opportunity.</p>
+                        <div class="k-label" id="optSavingLabel" data-i18n="opt.potential">Potential Tax Saving</div>
+                        <div class="opt-saving tnum"><span class="npr-mark" data-i18n="cur">NPR</span><span id="optSaving">0</span></div>
+                        <p class="opt-text" id="optText" data-i18n="opt.enterSalary">Enter your salary and calculate to see your CIT tax-saving opportunity.</p>
                     </div>
                     <div class="opt-stats">
-                        <div class="opt-row highlight"><span>Recommended contribution</span><strong id="optMaxContrib">NPR 0</strong></div>
-                        <div class="opt-row"><span>CIT deposit &middot; per year</span><strong id="optDepositYear">NPR 0</strong></div>
-                        <div class="opt-row"><span>CIT deposit &middot; per month</span><strong id="optDepositMonth">NPR 0</strong></div>
-                        <div class="opt-row"><span>Taxable income after CIT</span><strong id="optTaxable">NPR 0</strong></div>
-                        <div class="opt-row"><span>Tax without CIT</span><strong id="optTaxWithout">NPR 0</strong></div>
-                        <div class="opt-row"><span>Tax with CIT</span><strong id="optTaxWith">NPR 0</strong></div>
-                        <div class="opt-row"><span>Take-home &middot; per year</span><strong id="optCashYear">NPR 0</strong></div>
-                        <div class="opt-row"><span>Take-home &middot; per month</span><strong id="optCashMonth">NPR 0</strong></div>
+                        <div class="opt-row highlight"><span data-i18n="opt.recContrib">Recommended contribution</span><strong id="optMaxContrib">NPR 0</strong></div>
+                        <div class="opt-row"><span data-i18n="opt.depositYear">CIT deposit &middot; per year</span><strong id="optDepositYear">NPR 0</strong></div>
+                        <div class="opt-row"><span data-i18n="opt.depositMonth">CIT deposit &middot; per month</span><strong id="optDepositMonth">NPR 0</strong></div>
+                        <div class="opt-row"><span data-i18n="opt.taxable">Taxable income after CIT</span><strong id="optTaxable">NPR 0</strong></div>
+                        <div class="opt-row"><span data-i18n="opt.without">Tax without CIT</span><strong id="optTaxWithout">NPR 0</strong></div>
+                        <div class="opt-row"><span data-i18n="opt.with">Tax with CIT</span><strong id="optTaxWith">NPR 0</strong></div>
+                        <div class="opt-row"><span data-i18n="opt.takeYear">Take-home &middot; per year</span><strong id="optCashYear">NPR 0</strong></div>
+                        <div class="opt-row"><span data-i18n="opt.takeMonth">Take-home &middot; per month</span><strong id="optCashMonth">NPR 0</strong></div>
                     </div>
                 </div>
-                <p class="opt-note">
+                <p class="opt-note" data-i18n-html="opt.note">
                     <strong>How the deduction limit works:</strong> Deductions for approved retirement funds &mdash; CIT, SSF, and provident/gratuity funds &mdash; are combined. The deductible amount is the lowest of one-third of assessable income, your actual contribution, or <strong>NPR 300,000</strong> per year. Social Security Fund (SSF) participants get a higher ceiling of <strong>NPR 500,000</strong>. These two ceilings cannot be stacked.
                 </p>
             </div>
@@ -722,26 +784,26 @@
             <!-- Slab ledger -->
             <div class="card card-pad" style="margin-bottom:1.5rem;">
                 <div class="subhead">
-                    <h3>Slab-by-Slab Breakdown</h3>
+                    <h3 data-i18n="led.title">Slab-by-Slab Breakdown</h3>
                     <button class="btn btn-ghost" id="printBtn" type="button">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg>
-                        Print / Save PDF
+                        <span data-i18n="led.print">Print / Save PDF</span>
                     </button>
                 </div>
                 <div class="table-wrap">
                     <table class="ledger-table">
                         <thead>
                             <tr>
-                                <th>Rate</th>
-                                <th>Tax Slab</th>
-                                <th class="num">Taxable Amount</th>
-                                <th class="num">Tax</th>
+                                <th data-i18n="led.rate">Rate</th>
+                                <th data-i18n="led.slab">Tax Slab</th>
+                                <th class="num" data-i18n="led.amount">Taxable Amount</th>
+                                <th class="num" data-i18n="led.tax">Tax</th>
                             </tr>
                         </thead>
                         <tbody id="ledgerBody"></tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="3">Total Tax Payable</td>
+                                <td colspan="3" data-i18n="led.total">Total Tax Payable</td>
                                 <td class="num" id="ledgerTotal">NPR 0</td>
                             </tr>
                         </tfoot>
@@ -752,14 +814,14 @@
             <!-- Strata -->
             <div class="card card-pad">
                 <div class="subhead">
-                    <h3>Income by Tax Bracket</h3>
-                    <span class="meta">By Marginal Rate</span>
+                    <h3 data-i18n="str.title">Income by Tax Bracket</h3>
+                    <span class="meta" data-i18n="str.meta">By Marginal Rate</span>
                 </div>
-                <p class="strata-note">Each column shows the portion of your income that falls within that bracket. Taller columns represent a larger share of your earnings.</p>
+                <p class="strata-note" data-i18n="str.note">Each column shows the portion of your income that falls within that bracket. Taller columns represent a larger share of your earnings.</p>
                 <div class="strata-grid" id="strataGrid"></div>
 
                 <div class="gauge">
-                    <span class="gauge-label">Effective Tax Rate</span>
+                    <span class="gauge-label" data-i18n="str.gauge">Effective Tax Rate</span>
                     <div class="gauge-track">
                         <div class="gauge-fill" id="gaugeFill"></div>
                         <div class="gauge-marker" id="gaugeMarker"></div>
@@ -775,87 +837,87 @@
                 <span class="icon" aria-hidden="true">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>
                 </span>
-                <h2>Tax Insights</h2>
-                <span class="meta">Read Before Filing</span>
+                <h2 data-i18n="ins.title">Tax Insights</h2>
+                <span class="meta" data-i18n="ins.meta">Read Before Filing</span>
             </div>
 
             <div class="card card-pad">
                 <div class="insight-callout">
                     <div class="c-head">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                        Personalized Recommendation
+                        <span data-i18n="ins.reco">Personalized Recommendation</span>
                     </div>
-                    <p id="recommendation">Calculate your tax to see a recommendation tailored to your income bracket and circumstances.</p>
+                    <p id="recommendation" data-i18n="ins.recoDefault">Calculate your tax to see a recommendation tailored to your income bracket and circumstances.</p>
                 </div>
 
                 <div class="tips-cols">
                     <div class="tips-col">
-                        <h3>Tax-Saving Opportunities</h3>
+                        <h3 data-i18n="ins.col1">Tax-Saving Opportunities</h3>
                         <div class="tip">
                             <span class="num">1</span>
                             <div>
-                                <strong>Social Security Fund</strong>
-                                <p>Enrolling in the SSF waives the 1% social security tax applied to the first slab of your income.</p>
+                                <strong data-i18n="tip.1t">Social Security Fund</strong>
+                                <p data-i18n="tip.1b">Enrolling in the SSF waives the 1% social security tax applied to the first slab of your income.</p>
                             </div>
                         </div>
                         <div class="tip">
                             <span class="num">2</span>
                             <div>
-                                <strong>Life Insurance Premiums</strong>
-                                <p>Deduct your annual life insurance premium, up to NPR 40,000. Couples who are both employed may combine their premiums up to the limit. The policy must be from a resident Nepali insurer.</p>
+                                <strong data-i18n="tip.2t">Life Insurance Premiums</strong>
+                                <p data-i18n="tip.2b">Deduct your annual life insurance premium, up to NPR 40,000. Couples who are both employed may combine their premiums up to the limit. The policy must be from a resident Nepali insurer.</p>
                             </div>
                         </div>
                         <div class="tip">
                             <span class="num">3</span>
                             <div>
-                                <strong>Health Insurance Premiums</strong>
-                                <p>Deduct your annual health insurance premium, up to NPR 20,000, for a policy from a resident Nepali insurer.</p>
+                                <strong data-i18n="tip.3t">Health Insurance Premiums</strong>
+                                <p data-i18n="tip.3b">Deduct your annual health insurance premium, up to NPR 20,000, for a policy from a resident Nepali insurer.</p>
                             </div>
                         </div>
                         <div class="tip">
                             <span class="num">4</span>
                             <div>
-                                <strong>Medical Tax Credit</strong>
-                                <p>Resident individuals can claim a credit against tax of the lowest of NPR 1,500, 15% of actual medical expenses, or your tax liability.</p>
+                                <strong data-i18n="tip.4t">Medical Tax Credit</strong>
+                                <p data-i18n="tip.4b">Resident individuals can claim a credit against tax of the lowest of NPR 1,500, 15% of actual medical expenses, or your tax liability.</p>
                             </div>
                         </div>
                         <div class="tip">
                             <span class="num">5</span>
                             <div>
-                                <strong>Pension Income</strong>
-                                <p>An additional 25% deduction applies to the first slab for pension income.</p>
+                                <strong data-i18n="tip.5t">Pension Income</strong>
+                                <p data-i18n="tip.5b">An additional 25% deduction applies to the first slab for pension income.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="tips-col">
-                        <h3>Planning Strategies</h3>
+                        <h3 data-i18n="ins.col2">Planning Strategies</h3>
                         <div class="tip">
                             <span class="num">6</span>
                             <div>
-                                <strong>Remote Work Allowance</strong>
-                                <p>Claim up to NPR 50,000 where employment is performed in designated remote areas.</p>
+                                <strong data-i18n="tip.6t">Remote Work Allowance</strong>
+                                <p data-i18n="tip.6b">Claim up to NPR 50,000 where employment is performed in designated remote areas.</p>
                             </div>
                         </div>
                         <div class="tip">
                             <span class="num">7</span>
                             <div>
-                                <strong>File Jointly as a Couple</strong>
-                                <p>Couples get a 0% slab of NPR 600,000 — NPR 100,000 higher than the individual filer.</p>
+                                <strong data-i18n="tip.7t">File Jointly as a Couple</strong>
+                                <p data-i18n="tip.7b">For FY 2082-83, couples get a 0% slab of NPR 600,000 — NPR 100,000 higher than the individual filer.</p>
                             </div>
                         </div>
                         <div class="tip">
                             <span class="num">8</span>
                             <div>
-                                <strong>Approved Retirement Schemes</strong>
-                                <p>Contributions to recognized retirement funds (such as CIT) receive favorable tax treatment under the Act.</p>
+                                <strong data-i18n="tip.8t">Approved Retirement Schemes</strong>
+                                <p data-i18n="tip.8b">Contributions to recognized retirement funds (such as CIT) receive favorable tax treatment under the Act.</p>
                             </div>
                         </div>
                         <div class="tip">
                             <span class="num">9</span>
                             <div>
-                                <strong>Income Splitting</strong>
-                                <p>Where lawful, distribute earnings across family members to lower the marginal rate borne by any one person.</p>
+                                <strong data-i18n="tip.9t">Income Splitting</strong>
+                                <p data-i18n="tip.9b">Where lawful, distribute earnings across family members to lower the marginal rate borne by any one person.</p>
                             </div>
                         </div>
                     </div>
@@ -863,35 +925,234 @@
             </div>
         </section>
 
+        <!-- FAQ -->
+        <section class="section faq" id="faq">
+            <div class="section-head">
+                <span class="icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
+                </span>
+                <h2 data-i18n="faq.title">Frequently Asked Questions</h2>
+            </div>
+
+            <details>
+                <summary data-i18n="faq.q1">What are the income tax slabs for FY 2083-84?</summary>
+                <div class="faq-body">
+                    <p data-i18n="faq.a1">For FY 2083-84, the first NPR 10,00,000 is taxed at 1% (social security tax only), then 10%, 20%, 27%, and 29% on the highest band. The exemption ceiling was raised to NPR 10 lakh and the top rate cut to 29%.</p>
+                    <table>
+                        <thead><tr><th data-i18n="faq.thIncome">Annual taxable income (NPR)</th><th data-i18n="faq.thRate">Tax rate</th></tr></thead>
+                        <tbody>
+                            <tr><td>Up to 10,00,000</td><td>1%</td></tr>
+                            <tr><td>10,00,001 – 15,00,000</td><td>10%</td></tr>
+                            <tr><td>15,00,001 – 25,00,000</td><td>20%</td></tr>
+                            <tr><td>25,00,001 – 40,00,000</td><td>27%</td></tr>
+                            <tr><td>Above 40,00,000</td><td>29%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+
+            <details>
+                <summary data-i18n="faq.q2">What are the income tax slabs for FY 2082-83?</summary>
+                <div class="faq-body">
+                    <p data-i18n="faq.a2">For individuals, the first NPR 5,00,000 is taxed at 1% (social security tax only), the next NPR 2,00,000 at 10%, the next NPR 3,00,000 at 20%, the next NPR 10,00,000 at 30%, the next NPR 20,00,000 at 36%, and anything above at 39%. Couples filing jointly get a first slab of NPR 6,00,000.</p>
+                </div>
+            </details>
+
+            <details>
+                <summary data-i18n="faq.q3">How can I reduce my tax liability in Nepal?</summary>
+                <div class="faq-body">
+                    <p data-i18n="faq.a3">Enrol in the Social Security Fund to waive the 1% social security tax; deduct life insurance premiums (up to NPR 40,000) and health insurance premiums (up to NPR 20,000); claim the medical tax credit; contribute to the Citizen Investment Trust or other approved retirement funds; and, for FY 2082-83, file jointly as a couple where it helps.</p>
+                </div>
+            </details>
+
+            <details>
+                <summary data-i18n="faq.q4">What is the Social Security Fund (SSF)?</summary>
+                <div class="faq-body">
+                    <p data-i18n="faq.a4">The SSF is a government-run social security scheme. Employees contribute 11% of basic salary and employers 20%. Participating waives the 1% social security tax on the first slab and provides medical, accident, disability, and retirement benefits.</p>
+                </div>
+            </details>
+
+            <details>
+                <summary data-i18n="faq.q5">Is the tax different for individuals and couples?</summary>
+                <div class="faq-body">
+                    <p data-i18n="faq.a5">For FY 2082-83, couples filing jointly get a higher first slab (NPR 6,00,000 vs 5,00,000) and slightly different upper bands. For FY 2083-84, the published structure does not distinguish couples, so this calculator applies the same slabs to both.</p>
+                </div>
+            </details>
+        </section>
+
         <footer class="footer">
-            <p>Data based on Nepal tax rates for FY 2082&ndash;83.</p>
-            <p class="disclaimer">This calculator is for informational purposes only. Always consult a qualified tax professional before filing.</p>
-            <p class="copy">&copy; 2025 Nepal Tax Calculator &middot; Developed by <a href="https://github.com/thearjun">Arjun Adhikari</a></p>
+            <p data-i18n="footer.data">Data based on Nepal tax rates for FY 2082&ndash;83 and 2083&ndash;84.</p>
+            <p class="disclaimer" data-i18n="footer.disclaimer">This calculator is for informational purposes only. Always consult a qualified tax professional before filing.</p>
+            <p class="copy">&copy; 2025 Nepal Tax Calculator &middot; <span data-i18n="footer.by">Developed by</span> <a href="https://github.com/thearjun">Arjun Adhikari</a></p>
         </footer>
     </main>
 
     <script>
         const $ = (id) => document.getElementById(id);
         let suppressScroll = false;
+        let lang = 'en';
 
-        $('monthly').addEventListener('change', () => {
-            $('salary-hint').textContent = 'Monthly gross, before deductions';
-        });
-        $('yearly').addEventListener('change', () => {
-            $('salary-hint').textContent = 'Yearly gross, before deductions';
-        });
+        // ---- Internationalization (English / Nepali) ----
+        // Static [data-i18n] English is auto-captured from the DOM; only Nepali (NE) is
+        // hand-written. MSG holds JS-generated (dynamic) strings with {placeholder} vars.
+        const EN = {};
+        const NE = {
+            'app.name': 'नेपाल कर क्याल्कुलेटर', 'app.sub': 'आयकर · आन्तरिक राजस्व विभाग',
+            'hero.h1': 'आफ्नो आयकर गणना गर्नुहोस्',
+            'hero.desc': 'आन्तरिक राजस्व विभागको पछिल्लो कर दरअनुसार आफ्नो आयकर अनुमान गर्नुहोस् — छुट, CIT अनुकूलन, र वर्ष-वर्षको बजेट तुलनासहित।',
+            'form.title': 'आय विवरण', 'form.step': 'चरण १ / २',
+            'f.fy': 'आर्थिक वर्ष', 'f.fyHint': 'कर दर वर्षअनुसार फरक हुन्छ',
+            'f.salary': 'तलब', 'f.period': 'आय अवधि', 'f.periodHint': 'यो रकम कसरी देखाइएको छ',
+            'f.monthly': 'मासिक', 'f.yearly': 'वार्षिक',
+            'f.filing': 'दाखिला स्थिति', 'f.filingHint': 'दम्पतीलाई बढी पहिलो खुड्किलो',
+            'f.individual': 'व्यक्तिगत', 'f.couple': 'दम्पती (संयुक्त)',
+            'f.ssf': 'सामाजिक सुरक्षा कोष', 'f.ssfHint': '१% सामाजिक सुरक्षा कर छुट गराउँछ', 'f.ssfLabel': 'SSF सहभागिता',
+            'f.cit': 'नागरिक लगानी कोष (CIT)', 'f.citHint': 'आयको ⅓ सम्म, बढीमा रु ३,००,००० (SSF भए रु ५,००,०००) कट्टी',
+            'f.citLabel': 'अधिकतम कर लाभका लागि CIT मा योगदान गर्नुहोस्', 'f.useMax': 'अधिकतम प्रयोग',
+            'f.insMed': 'बीमा र चिकित्सा', 'f.insMedHint': 'वैकल्पिक · कर अझ घटाउँछ',
+            'f.life': 'जीवन बीमा प्रिमियम', 'f.lifeHint': 'वार्षिक प्रिमियम — रु ४०,००० सम्म कट्टी',
+            'f.health': 'स्वास्थ्य बीमा प्रिमियम', 'f.healthHint': 'वार्षिक प्रिमियम — रु २०,००० सम्म कट्टी',
+            'f.medical': 'चिकित्सा खर्च', 'f.medicalHint': 'चिकित्सा कर क्रेडिट — १५%, रु १,५०० सम्म',
+            'f.calcNote': 'रोजिएको आर्थिक वर्षको कर दर प्रयोग गरिन्छ। विवरण भरेर गणना गर्नुहोस्।', 'f.calcBtn': 'कर गणना गर्नुहोस्',
+            'cur': 'रु',
+            'r.title': 'कर सारांश', 'r.meta': 'वार्षिक', 'r.totalTax': 'कुल तिर्नुपर्ने कर', 'r.effective': 'प्रभावकारी',
+            'r.netAnnual': 'खुद वार्षिक आय', 'r.afterTax': 'सबै कर पछि', 'r.netMonthly': 'खुद मासिक आय', 'r.perMonth': 'मासिक हातमा',
+            'r.breakdown': 'कर विवरण', 'r.incomeTax': 'आयकर', 'r.ssfTax': 'सामाजिक सुरक्षा कर', 'r.medCredit': 'चिकित्सा कर क्रेडिट',
+            'cmp.title': 'बजेट तुलना', 'cmp.net': 'खुद वार्षिक आय', 'cmp.rate': 'प्रभावकारी कर दर', 'cmp.selected': 'रोजिएको',
+            'opt.title': 'कर अनुकूलन — नागरिक लगानी कोष',
+            'opt.recContrib': 'सिफारिस गरिएको योगदान', 'opt.depositYear': 'CIT जम्मा · वार्षिक', 'opt.depositMonth': 'CIT जम्मा · मासिक',
+            'opt.taxable': 'CIT पछि करयोग्य आय', 'opt.without': 'CIT बिना कर', 'opt.with': 'CIT सहित कर',
+            'opt.takeYear': 'हातमा · वार्षिक', 'opt.takeMonth': 'हातमा · मासिक',
+            'opt.note': '<strong>कट्टी सीमा कसरी काम गर्छ:</strong> स्वीकृत निवृत्ति कोष — CIT, SSF, र सञ्चय/उपदान कोष — को कट्टी संयुक्त रूपमा गणना हुन्छ। कट्टी रकम निर्धारणयोग्य आयको एक-तिहाइ, तपाईंको वास्तविक योगदान, वा वार्षिक <strong>रु ३,००,०००</strong> — यीमध्ये सबैभन्दा कम हुन्छ। सामाजिक सुरक्षा कोष (SSF) सहभागीलाई <strong>रु ५,००,०००</strong> को उच्च सीमा हुन्छ। यी दुई सीमा एकैसाथ जोड्न मिल्दैन।',
+            'led.title': 'खुड्किला अनुसार विवरण', 'led.print': 'प्रिन्ट / PDF सेभ', 'led.rate': 'दर', 'led.slab': 'कर खुड्किलो',
+            'led.amount': 'करयोग्य रकम', 'led.tax': 'कर', 'led.total': 'कुल तिर्नुपर्ने कर',
+            'str.title': 'कर खुड्किलोअनुसार आय', 'str.meta': 'सीमान्त दरअनुसार',
+            'str.note': 'प्रत्येक स्तम्भले त्यो खुड्किलोभित्र पर्ने तपाईंको आयको हिस्सा देखाउँछ। अग्लो स्तम्भले ठूलो हिस्सा जनाउँछ।',
+            'str.gauge': 'प्रभावकारी कर दर',
+            'ins.title': 'कर सुझाव', 'ins.meta': 'दाखिला गर्नुअघि पढ्नुहोस्', 'ins.reco': 'व्यक्तिगत सिफारिस',
+            'ins.recoDefault': 'आफ्नो आय वर्गअनुसार सिफारिस हेर्न कर गणना गर्नुहोस्।',
+            'ins.col1': 'कर बचतका अवसरहरू', 'ins.col2': 'योजना रणनीतिहरू',
+            'tip.1t': 'सामाजिक सुरक्षा कोष', 'tip.1b': 'SSF मा सहभागी भएमा आयको पहिलो खुड्किलोमा लाग्ने १% सामाजिक सुरक्षा कर छुट हुन्छ।',
+            'tip.2t': 'जीवन बीमा प्रिमियम', 'tip.2b': 'वार्षिक जीवन बीमा प्रिमियम रु ४०,००० सम्म कट्टी गर्नुहोस्। दुवै रोजगार भएका दम्पतीले सीमासम्म प्रिमियम जोड्न सक्छन्। बीमा नेपालको स्वदेशी कम्पनीबाट हुनुपर्छ।',
+            'tip.3t': 'स्वास्थ्य बीमा प्रिमियम', 'tip.3b': 'स्वदेशी कम्पनीको स्वास्थ्य बीमा प्रिमियम वार्षिक रु २०,००० सम्म कट्टी गर्नुहोस्।',
+            'tip.4t': 'चिकित्सा कर क्रेडिट', 'tip.4b': 'बासिन्दा व्यक्तिले रु १,५००, वास्तविक चिकित्सा खर्चको १५%, वा आफ्नो कर दायित्व — यीमध्ये सबैभन्दा कमको क्रेडिट दाबी गर्न सक्छन्।',
+            'tip.5t': 'निवृत्तिभरण आय', 'tip.5b': 'निवृत्तिभरण आयका लागि पहिलो खुड्किलोमा थप २५% कट्टी लागू हुन्छ।',
+            'tip.6t': 'दुर्गम भत्ता', 'tip.6b': 'तोकिएका दुर्गम क्षेत्रमा काम गरेमा रु ५०,००० सम्म दाबी गर्न सकिन्छ।',
+            'tip.7t': 'दम्पतीको रूपमा संयुक्त दाखिला', 'tip.7b': 'आ.व. २०८२-८३ मा दम्पतीले रु ६,००,००० को ०% खुड्किलो पाउँछन् — व्यक्तिगतभन्दा रु १,००,००० बढी।',
+            'tip.8t': 'स्वीकृत निवृत्ति योजना', 'tip.8b': 'स्वीकृत निवृत्ति कोष (जस्तै CIT) मा योगदानले ऐनअनुसार अनुकूल कर सुविधा पाउँछ।',
+            'tip.9t': 'आय विभाजन', 'tip.9b': 'कानुनी रूपमा सम्भव भए परिवारका सदस्यबीच आय बाँडेर कुनै एक व्यक्तिमाथिको सीमान्त दर घटाउन सकिन्छ।',
+            'faq.title': 'बारम्बार सोधिने प्रश्नहरू',
+            'faq.q1': 'आ.व. २०८३-८४ का आयकर खुड्किला के के हुन्?',
+            'faq.a1': 'आ.व. २०८३-८४ मा पहिलो रु १०,००,००० मा १% (सामाजिक सुरक्षा कर मात्र), त्यसपछि १०%, २०%, २७%, र सबैभन्दा माथिल्लो खण्डमा २९% कर लाग्छ। छुट सीमा रु १० लाख पुर्‍याइएको र उच्चतम दर २९% मा झारिएको छ।',
+            'faq.q2': 'आ.व. २०८२-८३ का आयकर खुड्किला के के हुन्?',
+            'faq.a2': 'व्यक्तिका लागि पहिलो रु ५,००,००० मा १% (सामाजिक सुरक्षा कर मात्र), अर्को रु २,००,००० मा १०%, अर्को रु ३,००,००० मा २०%, अर्को रु १०,००,००० मा ३०%, अर्को रु २०,००,००० मा ३६%, र सोभन्दा माथि ३९% कर लाग्छ। दम्पतीले रु ६,००,००० को पहिलो खुड्किलो पाउँछन्।',
+            'faq.q3': 'नेपालमा कर दायित्व कसरी घटाउने?',
+            'faq.a3': 'SSF मा सहभागी भएर १% सामाजिक सुरक्षा कर छुट गर्नुहोस्; जीवन बीमा (रु ४०,००० सम्म) र स्वास्थ्य बीमा (रु २०,००० सम्म) प्रिमियम कट्टी गर्नुहोस्; चिकित्सा कर क्रेडिट दाबी गर्नुहोस्; नागरिक लगानी कोष वा अन्य स्वीकृत निवृत्ति कोषमा योगदान गर्नुहोस्; र आ.व. २०८२-८३ मा फाइदाजनक भए दम्पतीको रूपमा संयुक्त दाखिला गर्नुहोस्।',
+            'faq.q4': 'सामाजिक सुरक्षा कोष (SSF) के हो?',
+            'faq.a4': 'SSF सरकारद्वारा सञ्चालित सामाजिक सुरक्षा योजना हो। कर्मचारीले आधारभूत तलबको ११% र रोजगारदाताले २०% योगदान गर्छन्। सहभागी भएमा पहिलो खुड्किलोको १% सामाजिक सुरक्षा कर छुट हुन्छ र चिकित्सा, दुर्घटना, अशक्तता तथा निवृत्ति सुविधा पाइन्छ।',
+            'faq.q5': 'व्यक्ति र दम्पतीका लागि कर फरक हुन्छ?',
+            'faq.a5': 'आ.व. २०८२-८३ मा दम्पतीले उच्च पहिलो खुड्किलो (रु ६,००,००० बनाम ५,००,०००) र केही फरक माथिल्ला खण्ड पाउँछन्। आ.व. २०८३-८४ को संरचनाले दम्पतीलाई छुट्याउँदैन, त्यसैले यो क्याल्कुलेटरले दुवैमा एउटै दर लागू गर्छ।',
+            'faq.thIncome': 'वार्षिक करयोग्य आय (रु)', 'faq.thRate': 'कर दर',
+            'footer.data': 'नेपालको आ.व. २०८२-८३ र २०८३-८४ का कर दरमा आधारित।',
+            'footer.disclaimer': 'यो क्याल्कुलेटर जानकारीमूलक प्रयोजनका लागि मात्र हो। दाखिला गर्नुअघि सधैं योग्य कर परामर्शदातासँग सल्लाह लिनुहोस्।',
+            'footer.by': 'विकासकर्ता:'
+        };
+        const MSG = {
+            'hero.fyPrefix': { en: 'Fiscal Year', ne: 'आर्थिक वर्ष' },
+            'r.onIncome': { en: 'on income of {amt}', ne: '{amt} आयमा' },
+            'led.credit': { en: 'Credit', ne: 'क्रेडिट' },
+            'slab.0': { en: 'First Slab', ne: 'पहिलो खुड्किलो' },
+            'slab.1': { en: 'Second Slab', ne: 'दोस्रो खुड्किलो' },
+            'slab.2': { en: 'Third Slab', ne: 'तेस्रो खुड्किलो' },
+            'slab.3': { en: 'Fourth Slab', ne: 'चौथो खुड्किलो' },
+            'slab.4': { en: 'Fifth Slab', ne: 'पाँचौं खुड्किलो' },
+            'slab.5': { en: 'Sixth Slab', ne: 'छैटौं खुड्किलो' },
+            'ssf.enrolled': { en: 'Enrolled', ne: 'नामाङ्कित' },
+            'ssf.notEnrolled': { en: 'Not enrolled', ne: 'नामाङ्कित छैन' },
+            'cit.yes': { en: 'Yes', ne: 'छ' }, 'cit.no': { en: 'No', ne: 'छैन' },
+            'f.salaryHintMonthly': { en: 'Monthly gross, before deductions', ne: 'मासिक खुद (कट्टीअघि)' },
+            'f.salaryHintYearly': { en: 'Yearly gross, before deductions', ne: 'वार्षिक खुद (कट्टीअघि)' },
+            'cmp.same': { en: 'Your tax is the same under both FY 2082-83 and FY 2083-84.', ne: 'आ.व. २०८२-८३ र २०८३-८४ दुवैमा तपाईंको कर उस्तै छ।' },
+            'cmp.less': { en: 'Under FY 2083-84 you pay {amt} less ({pct}% lower) than under FY 2082-83.', ne: 'आ.व. २०८३-८४ मा तपाईं आ.व. २०८२-८३ भन्दा {amt} कम ({pct}% कम) तिर्नुहुन्छ।' },
+            'cmp.more': { en: 'Under FY 2083-84 you pay {amt} more ({pct}% higher) than under FY 2082-83.', ne: 'आ.व. २०८३-८४ मा तपाईं आ.व. २०८२-८३ भन्दा {amt} बढी ({pct}% बढी) तिर्नुहुन्छ।' },
+            'opt.recommended': { en: 'Recommended', ne: 'सिफारिस' },
+            'opt.noBenefit': { en: 'No benefit', ne: 'लाभ छैन' },
+            'opt.applied': { en: 'Applied', ne: 'लागू' },
+            'opt.dash': { en: '—', ne: '—' },
+            'opt.potential': { en: 'Potential Tax Saving', ne: 'सम्भावित कर बचत' },
+            'opt.yourSaving': { en: 'Your Tax Saving', ne: 'तपाईंको कर बचत' },
+            'opt.enterSalary': { en: 'Enter your salary and calculate to see your CIT tax-saving opportunity.', ne: 'CIT कर बचतको अवसर हेर्न आफ्नो तलब हाली गणना गर्नुहोस्।' },
+            'opt.lowBenefit': { en: 'At your current income there is little or no income tax to offset, so a CIT contribution offers minimal tax benefit right now.', ne: 'तपाईंको हालको आयमा कटाउने आयकर थोरै वा छैन, त्यसैले अहिले CIT योगदानले न्यून कर लाभ दिन्छ।' },
+            'opt.recoText': { en: 'Deposit {amt} a year ({amtm} a month) to the Citizen Investment Trust (CIT) to lower your taxable income to {taxable} and save about {save} in tax. Turn on CIT above to apply it.', ne: 'करयोग्य आय {taxable} मा झार्न र करिब {save} कर बचत गर्न नागरिक लगानी कोष (CIT) मा वार्षिक {amt} ({amtm} मासिक) जम्मा गर्नुहोस्। लागू गर्न माथि CIT सक्रिय गर्नुहोस्।' },
+            'opt.appliedRoom': { en: "You're depositing {dep} a year ({depm} a month) and saving {save} in tax. Deposit the full {max} to save up to {maxsave} — an extra {extra}.", ne: 'तपाईं वार्षिक {dep} ({depm} मासिक) जम्मा गर्दै {save} कर बचत गर्दै हुनुहुन्छ। पूरै {max} जम्मा गरे {maxsave} सम्म — थप {extra} बचत हुन्छ।' },
+            'opt.appliedMax': { en: "You're depositing the maximum {dep} a year ({depm} a month) and saving {save} in tax. This deposit stays your money — it's invested in the fund for your future.", ne: 'तपाईं अधिकतम वार्षिक {dep} ({depm} मासिक) जम्मा गर्दै {save} कर बचत गर्दै हुनुहुन्छ। यो रकम तपाईंकै हो — भविष्यका लागि कोषमा लगानी हुन्छ।' },
+            'reco.low': { en: 'Your income is within the tax-free first slab (up to {first}), so you owe no income tax. Focus on growing your earning potential.', ne: 'तपाईंको आय करमुक्त पहिलो खुड्किलो (रु {first} सम्म) भित्र पर्छ, त्यसैले आयकर लाग्दैन। आफ्नो आय बढाउनमा ध्यान दिनुहोस्।' },
+            'reco.midNoSsf': { en: 'Consider enrolling in the Social Security Fund (SSF) to waive the 1% social security tax. Pair this with life and health insurance premium deductions for further savings.', ne: '१% सामाजिक सुरक्षा कर छुट गर्न सामाजिक सुरक्षा कोष (SSF) मा सहभागी हुने विचार गर्नुहोस्। थप बचतका लागि जीवन र स्वास्थ्य बीमा प्रिमियम कट्टीसँग जोड्नुहोस्।' },
+            'reco.midSsf': { en: 'Your SSF enrolment is already saving you money. Consider life and health insurance premium deductions, and contributing to the CIT, to further reduce your tax.', ne: 'तपाईंको SSF सहभागिताले पहिले नै बचत गराइरहेको छ। कर अझ घटाउन जीवन र स्वास्थ्य बीमा प्रिमियम कट्टी र CIT योगदानको विचार गर्नुहोस्।' },
+            'reco.couple': { en: 'For FY 2082-83, couples filing jointly get a 0% slab of NPR 600,000 instead of NPR 500,000. Where applicable, joint filing may yield meaningful savings.', ne: 'आ.व. २०८२-८३ मा संयुक्त दाखिला गर्ने दम्पतीले रु ५,००,००० को सट्टा रु ६,००,००० को ०% खुड्किलो पाउँछन्। उपयुक्त भए संयुक्त दाखिलाले उल्लेख्य बचत दिन सक्छ।' },
+            'reco.upper': { en: 'You are in the upper-middle bracket. Maximize every available deduction — CIT contributions, insurance premiums, and allowances — to keep your effective rate down.', ne: 'तपाईं माथिल्लो-मध्यम वर्गमा हुनुहुन्छ। प्रभावकारी दर घटाउन CIT योगदान, बीमा प्रिमियम, र भत्ता जस्ता सबै कट्टी अधिकतम प्रयोग गर्नुहोस्।' },
+            'reco.top': { en: 'At this income level, consider comprehensive planning with a tax professional. Maximize CIT and insurance deductions, explore tax-advantaged instruments, and treat planning as an ongoing practice.', ne: 'यस आय स्तरमा कर विशेषज्ञसँग व्यापक योजना बनाउनुहोस्। CIT र बीमा कट्टी अधिकतम गर्नुहोस्, कर-सहुलियत उपकरण खोज्नुहोस्, र योजनालाई निरन्तर अभ्यासका रूपमा लिनुहोस्।' }
+        };
+
+        function t(key, vars) {
+            const m = MSG[key];
+            let s = m ? (m[lang] != null ? m[lang] : m.en)
+                      : (lang === 'ne' && NE[key] != null ? NE[key] : (EN[key] != null ? EN[key] : key));
+            if (vars) Object.keys(vars).forEach((k) => { s = s.split('{' + k + '}').join(vars[k]); });
+            return s;
+        }
+        function captureEn() {
+            document.querySelectorAll('[data-i18n]').forEach((el) => {
+                const k = el.dataset.i18n;
+                if (EN[k] == null && !MSG[k]) EN[k] = el.textContent.trim();
+            });
+            document.querySelectorAll('[data-i18n-html]').forEach((el) => {
+                const k = el.dataset.i18nHtml;
+                if (EN[k] == null && !MSG[k]) EN[k] = el.innerHTML.trim();
+            });
+        }
+        function applyLang(l) {
+            lang = (l === 'ne') ? 'ne' : 'en';
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+            document.querySelectorAll('[data-i18n-html]').forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
+            $('langEn').classList.toggle('active', lang === 'en');
+            $('langNe').classList.toggle('active', lang === 'ne');
+            updateFyLabels();
+            updateSalaryHint();
+            updateSsfState();
+            updateCitState();
+            refreshCitMax();
+        }
+        function setLang(l) {
+            applyLang(l);
+            try { localStorage.setItem('lang', lang); } catch (e) {}
+            syncUrl();
+            // Re-render results in the new language if they're already shown
+            if ($('results').classList.contains('is-visible') && parseFloat($('salary').value) > 0) {
+                suppressScroll = true;
+                $('calculate').click();
+            }
+        }
+        function updateSalaryHint() {
+            $('salary-hint').textContent = $('yearly').checked ? t('f.salaryHintYearly') : t('f.salaryHintMonthly');
+        }
+        function updateSsfState() {
+            $('ssf-state').textContent = $('ssf').checked ? t('ssf.enrolled') : t('ssf.notEnrolled');
+        }
+        function updateCitState() {
+            $('cit-state').textContent = $('cit').checked ? t('cit.yes') : t('cit.no');
+        }
+
+        $('monthly').addEventListener('change', updateSalaryHint);
+        $('yearly').addEventListener('change', updateSalaryHint);
 
         const ssfToggle = $('ssf-toggle');
         const ssfInput = $('ssf');
         const ssfState = $('ssf-state');
         ssfInput.addEventListener('change', () => {
-            if (ssfInput.checked) {
-                ssfToggle.classList.add('is-on');
-                ssfState.textContent = 'Enrolled';
-            } else {
-                ssfToggle.classList.remove('is-on');
-                ssfState.textContent = 'Not enrolled';
-            }
+            ssfToggle.classList.toggle('is-on', ssfInput.checked);
+            updateSsfState();
         });
 
         // Citizen Investment Trust (CIT) controls
@@ -902,7 +1163,6 @@
         citInput.addEventListener('change', () => {
             if (citInput.checked) {
                 citToggle.classList.add('is-on');
-                citState.textContent = 'Yes';
                 citControls.hidden = false;
                 refreshCitMax();
                 if (!parseFloat($('citAmount').value)) {
@@ -910,9 +1170,9 @@
                 }
             } else {
                 citToggle.classList.remove('is-on');
-                citState.textContent = 'No';
                 citControls.hidden = true;
             }
+            updateCitState();
         });
         $('citMaxBtn').addEventListener('click', () => {
             $('citAmount').value = Math.round(citCapFor(currentIncome(), $('ssf').checked));
@@ -926,7 +1186,7 @@
         $('printBtn').addEventListener('click', () => window.print());
 
         const fmtNum = (n) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(n));
-        const fmtNpr = (n) => `NPR ${fmtNum(n)}`;
+        const fmtNpr = (n) => `${lang === 'ne' ? 'रु' : 'NPR'} ${fmtNum(n)}`;
 
         function countUp(el, target, durationMs = 1000) {
             const start = performance.now();
@@ -994,6 +1254,11 @@
             renderOptimization({ citEnabled, income, citCap, citDeduction, taxableIncome, otherDeductions,
                 baselineTax: baseNoCit, currentTax: totalTax, withMaxCit, netIncome, maxSaving, currentSaving });
 
+            // Year-on-year comparison: same income/deductions/SSF, each year's own slabs
+            const cmp82 = taxAfter(income, totalDeductions, bracketsFor('2082-83', maritalStatus), ssf, medicalExpenses);
+            const cmp83 = taxAfter(income, totalDeductions, bracketsFor('2083-84', maritalStatus), ssf, medicalExpenses);
+            renderComparison(income, cmp82, cmp83, fy);
+
             countUp($('totalTax'), totalTax);
             countUp($('netIncome'), netIncome);
             $('monthlyNetIncome').textContent = fmtNpr(monthlyNetIncome);
@@ -1007,7 +1272,7 @@
                 medRow.style.display = 'none';
             }
             $('effRatePill').textContent = `${effectiveTaxRate.toFixed(2)}%`;
-            $('verdictNote').textContent = `on income of ${fmtNpr(income)}`;
+            $('verdictNote').textContent = t('r.onIncome', { amt: fmtNpr(income) });
 
             const tbody = $('ledgerBody');
             tbody.innerHTML = '';
@@ -1016,7 +1281,7 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><span class="rate-chip" data-rate="${slab.rate}">${slab.rate}%</span></td>
-                    <td>${slab.name}</td>
+                    <td>${t('slab.' + slab.i)}</td>
                     <td class="num">${fmtNpr(slab.amount)}</td>
                     <td class="num">${fmtNpr(slab.tax)}</td>
                 `;
@@ -1027,7 +1292,7 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><span class="rate-chip" data-rate="ssf">1%</span></td>
-                    <td>Social Security Tax</td>
+                    <td>${t('r.ssfTax')}</td>
                     <td class="num">${fmtNpr(Math.min(brackets[0].upTo, taxableIncome))}</td>
                     <td class="num">${fmtNpr(ssfTax)}</td>
                 `;
@@ -1037,8 +1302,8 @@
             if (medicalCredit > 0) {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><span class="rate-chip" data-rate="credit">Credit</span></td>
-                    <td>Medical Tax Credit</td>
+                    <td><span class="rate-chip" data-rate="credit">${t('led.credit')}</span></td>
+                    <td>${t('r.medCredit')}</td>
                     <td class="num">&mdash;</td>
                     <td class="num">&minus;${fmtNpr(medicalCredit)}</td>
                 `;
@@ -1096,21 +1361,18 @@
         function recommendationFor(income, totalTax, taxRate, maritalStatus, ssf, fy) {
             const firstSlab = bracketsFor(fy, 'individual')[0].upTo; // tax-free ceiling for the year
             if (income <= firstSlab) {
-                return `Your income falls within the tax-free first slab (up to ${fmtNpr(firstSlab)}), so you owe no income tax${ssf ? '' : ' — only the 1% social security tax, which SSF enrolment waives'}. Focus on growing your earning potential.`;
+                return t('reco.low', { first: fmtNpr(firstSlab) });
             }
             if (income < firstSlab + 500000) {
-                if (!ssf) {
-                    return 'Consider enrolling in the Social Security Fund (SSF) to waive the 1% social security tax. Pair this with life and health insurance premium deductions for further savings.';
-                }
-                return 'Your SSF enrolment is already saving you money. Consider claiming life and health insurance premium deductions, and contributing to the CIT, to further reduce your tax liability.';
+                return ssf ? t('reco.midSsf') : t('reco.midNoSsf');
             }
             if (income < 2500000) {
                 if (fy === '2082-83' && maritalStatus === 'individual' && income > 1000000) {
-                    return 'For FY 2082-83, couples filing jointly get a 0% slab of NPR 600,000 instead of NPR 500,000. Where applicable, joint filing may yield meaningful savings.';
+                    return t('reco.couple');
                 }
-                return 'You are in the upper-middle bracket. Maximize every available deduction — CIT contributions, insurance premiums, and allowances — to keep your effective rate down.';
+                return t('reco.upper');
             }
-            return 'At this income level, consider comprehensive planning with a tax professional. Maximize CIT and insurance deductions, explore tax-advantaged instruments, and treat planning as an ongoing practice.';
+            return t('reco.top');
         }
 
         // Tax slabs by fiscal year. Each bracket is { upTo (cumulative ceiling), rate% }.
@@ -1163,7 +1425,7 @@
                 const amount = Math.max(0, Math.min(income, b.upTo) - prev);
                 const t = amount * (b.rate / 100);
                 tax += t;
-                taxBySlabs.push({ name: SLAB_NAMES[i] || `Slab ${i + 1}`, rate: b.rate, amount, tax: t });
+                taxBySlabs.push({ name: SLAB_NAMES[i] || `Slab ${i + 1}`, rate: b.rate, amount, tax: t, i });
                 prev = b.upTo;
             });
             return { tax, ssfTax, totalTax: tax + ssfTax, taxBySlabs };
@@ -1227,27 +1489,58 @@
             countUp($('optSaving'), saving);
 
             if (!applied) {
-                $('optSavingLabel').textContent = 'Potential Tax Saving';
+                $('optSavingLabel').textContent = t('opt.potential');
                 if (o.citCap <= 0) {
-                    $('optStatus').textContent = '—';
-                    $('optText').textContent = 'Enter your salary above to see how much you could save through the Citizen Investment Trust (CIT).';
+                    $('optStatus').textContent = t('opt.dash');
+                    $('optText').textContent = t('opt.enterSalary');
                 } else if (o.maxSaving < 1) {
-                    $('optStatus').textContent = 'No benefit';
-                    $('optText').textContent = 'At your current income there is little or no income tax to offset, so a CIT contribution offers minimal tax benefit right now.';
+                    $('optStatus').textContent = t('opt.noBenefit');
+                    $('optText').textContent = t('opt.lowBenefit');
                 } else {
-                    $('optStatus').textContent = 'Recommended';
-                    $('optText').textContent = `Deposit ${fmtNpr(deposit)} a year (${fmtNpr(deposit / 12)} a month) to the Citizen Investment Trust (CIT) to lower your taxable income to ${fmtNpr(taxable)} and save about ${fmtNpr(o.maxSaving)} in tax. Turn on CIT above to apply it.`;
+                    $('optStatus').textContent = t('opt.recommended');
+                    $('optText').textContent = t('opt.recoText', {
+                        amt: fmtNpr(deposit), amtm: fmtNpr(deposit / 12), taxable: fmtNpr(taxable), save: fmtNpr(o.maxSaving)
+                    });
                 }
             } else {
-                $('optStatus').textContent = 'Applied';
-                $('optSavingLabel').textContent = 'Your Tax Saving';
+                $('optStatus').textContent = t('opt.applied');
+                $('optSavingLabel').textContent = t('opt.yourSaving');
                 const room = o.citCap - o.citDeduction;
                 if (room > 1) {
-                    const extra = o.maxSaving - o.currentSaving;
-                    $('optText').textContent = `You're depositing ${fmtNpr(o.citDeduction)} a year (${fmtNpr(o.citDeduction / 12)} a month) and saving ${fmtNpr(o.currentSaving)} in tax. Deposit the full ${fmtNpr(o.citCap)} to save up to ${fmtNpr(o.maxSaving)} — an extra ${fmtNpr(extra)}.`;
+                    $('optText').textContent = t('opt.appliedRoom', {
+                        dep: fmtNpr(o.citDeduction), depm: fmtNpr(o.citDeduction / 12), save: fmtNpr(o.currentSaving),
+                        max: fmtNpr(o.citCap), maxsave: fmtNpr(o.maxSaving), extra: fmtNpr(o.maxSaving - o.currentSaving)
+                    });
                 } else {
-                    $('optText').textContent = `You're depositing the maximum ${fmtNpr(o.citDeduction)} a year (${fmtNpr(o.citDeduction / 12)} a month) and saving ${fmtNpr(o.currentSaving)} in tax. This deposit stays your money — it's invested in the fund for your future.`;
+                    $('optText').textContent = t('opt.appliedMax', {
+                        dep: fmtNpr(o.citDeduction), depm: fmtNpr(o.citDeduction / 12), save: fmtNpr(o.currentSaving)
+                    });
                 }
+            }
+        }
+
+        function renderComparison(income, a, b, fy) {
+            $('cmp82Tax').textContent = fmtNum(a.totalTax);
+            $('cmp83Tax').textContent = fmtNum(b.totalTax);
+            $('cmp82Net').textContent = fmtNpr(income - a.totalTax);
+            $('cmp83Net').textContent = fmtNpr(income - b.totalTax);
+            $('cmp82Rate').textContent = (income > 0 ? a.totalTax / income * 100 : 0).toFixed(2) + '%';
+            $('cmp83Rate').textContent = (income > 0 ? b.totalTax / income * 100 : 0).toFixed(2) + '%';
+
+            $('cmp82Col').classList.toggle('is-active', fy === '2082-83');
+            $('cmp83Col').classList.toggle('is-active', fy === '2083-84');
+            $('cmp82Tag').style.display = fy === '2082-83' ? '' : 'none';
+            $('cmp83Tag').style.display = fy === '2083-84' ? '' : 'none';
+
+            const d = a.totalTax - b.totalTax;          // > 0 ⇒ cheaper under 2083-84
+            const pct = a.totalTax > 0 ? Math.abs(d) / a.totalTax * 100 : 0;
+            const banner = $('cmpDelta');
+            if (Math.abs(d) < 1) {
+                banner.textContent = t('cmp.same');
+            } else if (d > 0) {
+                banner.textContent = t('cmp.less', { amt: fmtNpr(d), pct: pct.toFixed(1) });
+            } else {
+                banner.textContent = t('cmp.more', { amt: fmtNpr(-d), pct: pct.toFixed(1) });
             }
         }
 
@@ -1266,6 +1559,7 @@
             if ($('lifePremium').value) p.set('life', $('lifePremium').value);
             if ($('healthPremium').value) p.set('health', $('healthPremium').value);
             if ($('medicalExpenses').value) p.set('medical', $('medicalExpenses').value);
+            if (lang === 'ne') p.set('lang', 'ne');            // English is the default
             const qs = p.toString();
             try {
                 history.replaceState(null, '', qs ? `${location.pathname}?${qs}` : location.pathname);
@@ -1289,10 +1583,11 @@
             if (p.has('medical')) $('medicalExpenses').value = p.get('medical');
 
             // Reflect dependent UI state for the restored values
-            $('salary-hint').textContent = $('yearly').checked
-                ? 'Yearly gross, before deductions' : 'Monthly gross, before deductions';
-            if ($('ssf').checked) { ssfToggle.classList.add('is-on'); ssfState.textContent = 'Enrolled'; }
-            if ($('cit').checked) { citToggle.classList.add('is-on'); citState.textContent = 'Yes'; citControls.hidden = false; }
+            updateSalaryHint();
+            if ($('ssf').checked) ssfToggle.classList.add('is-on');
+            updateSsfState();
+            if ($('cit').checked) { citToggle.classList.add('is-on'); citControls.hidden = false; }
+            updateCitState();
             refreshCitMax();
 
             // Auto-calculate without yanking the viewport down to the results
@@ -1303,11 +1598,8 @@
         // and show Filing Status only for FY 2082-83 (FY 2083-84 has no separate couple slabs).
         function updateFyLabels() {
             const fy = selectedFY();
-            const disp = 'FY ' + fy.replace('-', '–');   // e.g. "FY 2083–84"
-            $('fyPill').textContent = disp;
-            $('heroFy').textContent = 'Fiscal Year ' + fy.replace('-', '–');
-            $('heroFyStrong').textContent = disp + ' tax slabs';
-            $('calcNoteFy').textContent = disp;
+            $('fyPill').textContent = 'FY ' + fy.replace('-', '–');
+            $('heroFy').textContent = t('hero.fyPrefix') + ' ' + fy.replace('-', '–');
 
             const hasCouple = fy === '2082-83';
             $('filingField').style.display = hasCouple ? '' : 'none';
@@ -1320,7 +1612,18 @@
                 syncUrl();
                 if (parseFloat($('salary').value) > 0) { suppressScroll = true; $('calculate').click(); }
             }));
-        updateFyLabels();
+        // Language: restore preference (URL ?lang or localStorage), capture English, apply
+        (function initLang() {
+            const urlLang = new URLSearchParams(location.search).get('lang');
+            let stored = null;
+            try { stored = localStorage.getItem('lang'); } catch (e) {}
+            let initial = urlLang || stored || 'en';
+            if (initial !== 'ne') initial = 'en';
+            captureEn();
+            applyLang(initial);   // also runs updateFyLabels / state helpers
+        })();
+        $('langEn').addEventListener('click', () => setLang('en'));
+        $('langNe').addEventListener('click', () => setLang('ne'));
 
         // Keep the URL in sync as the form changes
         ['salary', 'citAmount', 'lifePremium', 'healthPremium', 'medicalExpenses']
@@ -1329,6 +1632,13 @@
             .forEach((id) => $(id).addEventListener('change', syncUrl));
 
         restoreFromUrl();
+
+        // Register the service worker (PWA / offline). No-op on file://; works on https.
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => { /* ignore */ });
+            });
+        }
     </script>
 
     <script type="application/ld+json">
