@@ -29,7 +29,7 @@
     }
     </script>
 
-    <title>Nepal Tax Calculator FY 2082-83</title>
+    <title>Nepal Tax Calculator FY 2082-83 &amp; 2083-84</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -325,7 +325,9 @@
         .rate-chip[data-rate="0"]   { background: #f1f5f9; color: var(--muted); }
         .rate-chip[data-rate="10"]  { background: #dbeafe; color: #1d4ed8; }
         .rate-chip[data-rate="20"]  { background: #bfdbfe; color: #1e40af; }
+        .rate-chip[data-rate="27"]  { background: #93c5fd; color: #1e3a8a; }
         .rate-chip[data-rate="30"]  { background: #93c5fd; color: #1e3a8a; }
+        .rate-chip[data-rate="29"]  { background: var(--navy); color: #fff; }
         .rate-chip[data-rate="36"]  { background: var(--navy); color: #fff; }
         .rate-chip[data-rate="39"]  { background: var(--navy-deep); color: #fff; }
         .rate-chip[data-rate="ssf"] { background: var(--success-soft); color: var(--success); }
@@ -349,7 +351,9 @@
         .stratum[data-rate="0"]  .stratum-bar { background: #cbd5e1; }
         .stratum[data-rate="10"] .stratum-bar { background: #93c5fd; }
         .stratum[data-rate="20"] .stratum-bar { background: #60a5fa; }
+        .stratum[data-rate="27"] .stratum-bar { background: var(--blue); }
         .stratum[data-rate="30"] .stratum-bar { background: var(--blue); }
+        .stratum[data-rate="29"] .stratum-bar { background: var(--navy); }
         .stratum[data-rate="36"] .stratum-bar { background: var(--navy); }
         .stratum[data-rate="39"] .stratum-bar { background: var(--navy-deep); }
         .stratum-amount { font-size: 0.74rem; color: var(--muted); margin-top: 0.6rem; font-variant-numeric: tabular-nums; }
@@ -493,16 +497,16 @@
                     <div class="sub">Income Tax &middot; Inland Revenue Department</div>
                 </div>
             </div>
-            <span class="fy-pill">FY 2082-83</span>
+            <span class="fy-pill" id="fyPill">FY 2083-84</span>
         </div>
     </header>
 
     <main class="page">
         <!-- Hero -->
         <section class="hero">
-            <div class="eyebrow">Fiscal Year 2082&ndash;83</div>
+            <div class="eyebrow" id="heroFy">Fiscal Year 2083&ndash;84</div>
             <h1>Calculate Your Income Tax</h1>
-            <p>Estimate your Nepal income tax liability against the latest <strong>FY 2082&ndash;83 tax slabs</strong> set by the Inland Revenue Department. Supports individual and joint (couple) filing and Social Security Fund participation.</p>
+            <p>Estimate your Nepal income tax liability against the <strong id="heroFyStrong">FY 2083&ndash;84 tax slabs</strong> set by the Inland Revenue Department. Supports individual and joint (couple) filing and Social Security Fund participation.</p>
         </section>
 
         <!-- Income details -->
@@ -516,6 +520,19 @@
             </div>
 
             <div class="form-grid">
+                <div class="field col-12">
+                    <div class="field-label">
+                        <span class="lbl">Fiscal Year</span>
+                        <span class="hint">Tax slabs differ by year</span>
+                    </div>
+                    <div class="segmented" role="radiogroup" aria-label="Fiscal year">
+                        <input type="radio" id="fy2083" name="fiscal-year" value="2083-84" checked>
+                        <label for="fy2083">FY 2083-84</label>
+                        <input type="radio" id="fy2082" name="fiscal-year" value="2082-83">
+                        <label for="fy2082">FY 2082-83</label>
+                    </div>
+                </div>
+
                 <div class="field col-7">
                     <div class="field-label">
                         <span class="lbl">Salary</span>
@@ -540,7 +557,7 @@
                     </div>
                 </div>
 
-                <div class="field col-6">
+                <div class="field col-6" id="filingField">
                     <div class="field-label">
                         <span class="lbl">Filing Status</span>
                         <span class="hint">Couples get a higher first slab</span>
@@ -553,7 +570,7 @@
                     </div>
                 </div>
 
-                <div class="field col-6">
+                <div class="field col-6" id="ssfField">
                     <div class="field-label">
                         <span class="lbl">Social Security Fund</span>
                         <span class="hint">Waives the 1% social security tax</span>
@@ -632,7 +649,7 @@
             </div>
 
             <div class="calc-row">
-                <p class="calc-note">Figures are calculated against the FY 2082&ndash;83 tax slabs. Fill in your details and calculate.</p>
+                <p class="calc-note">Figures are calculated against the <span id="calcNoteFy">FY 2083&ndash;84</span> tax slabs. Fill in your details and calculate.</p>
                 <button class="btn" id="calculate" type="button">
                     Calculate Tax
                     <svg width="16" height="14" viewBox="0 0 16 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 7h12M9 3l4 4-4 4"/></svg>
@@ -939,9 +956,8 @@
                 return;
             }
 
-            const slabs = maritalStatus === 'individual'
-                ? { base: 500000, next1: 200000, next2: 300000, next3: 1000000, next4: 2000000 }
-                : { base: 600000, next1: 200000, next2: 300000, next3: 900000, next4: 2000000 };
+            const fy = selectedFY();
+            const brackets = bracketsFor(fy, maritalStatus);
 
             // Insurance & medical reliefs
             const lifePremium = parseFloat($('lifePremium').value) || 0;
@@ -960,7 +976,7 @@
             const totalDeductions = otherDeductions + citDeduction;
             const taxableIncome = Math.max(0, income - totalDeductions);
 
-            const current = taxAfter(income, totalDeductions, slabs, ssf, medicalExpenses);
+            const current = taxAfter(income, totalDeductions, brackets, ssf, medicalExpenses);
             const tax = current.tax;               // gross income tax (sum of slabs)
             const ssfTax = current.ssfTax;
             const medicalCredit = current.credit;  // medical tax credit applied
@@ -971,8 +987,8 @@
             const effectiveTaxRate = income > 0 ? (totalTax / income) * 100 : 0;
 
             // CIT optimization (isolates CIT benefit; other reliefs held constant)
-            const baseNoCit  = taxAfter(income, otherDeductions, slabs, ssf, medicalExpenses).totalTax;
-            const withMaxCit = taxAfter(income, otherDeductions + citCap, slabs, ssf, medicalExpenses).totalTax;
+            const baseNoCit  = taxAfter(income, otherDeductions, brackets, ssf, medicalExpenses).totalTax;
+            const withMaxCit = taxAfter(income, otherDeductions + citCap, brackets, ssf, medicalExpenses).totalTax;
             const maxSaving = baseNoCit - withMaxCit;
             const currentSaving = baseNoCit - totalTax;
             renderOptimization({ citEnabled, income, citCap, citDeduction, taxableIncome, otherDeductions,
@@ -1012,7 +1028,7 @@
                 tr.innerHTML = `
                     <td><span class="rate-chip" data-rate="ssf">1%</span></td>
                     <td>Social Security Tax</td>
-                    <td class="num">${fmtNpr(Math.min(slabs.base, taxableIncome))}</td>
+                    <td class="num">${fmtNpr(Math.min(brackets[0].upTo, taxableIncome))}</td>
                     <td class="num">${fmtNpr(ssfTax)}</td>
                 `;
                 tbody.appendChild(tr);
@@ -1065,7 +1081,7 @@
             $('results').classList.add('is-visible');
             $('insights').classList.add('is-visible');
 
-            $('recommendation').textContent = recommendationFor(income, totalTax, effectiveTaxRate, maritalStatus, ssf);
+            $('recommendation').textContent = recommendationFor(income, totalTax, effectiveTaxRate, maritalStatus, ssf, fy);
 
             setTimeout(() => {
                 if (!suppressScroll) $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1077,65 +1093,87 @@
             if (e.key === 'Enter') $('calculate').click();
         });
 
-        function recommendationFor(income, totalTax, taxRate, maritalStatus, ssf) {
-            if (income < 600000) {
-                return 'Your income sits within the lowest tax bracket. At this stage, focus on growing your earning potential — tax planning will matter more as your income rises.';
+        function recommendationFor(income, totalTax, taxRate, maritalStatus, ssf, fy) {
+            const firstSlab = bracketsFor(fy, 'individual')[0].upTo; // tax-free ceiling for the year
+            if (income <= firstSlab) {
+                return `Your income falls within the tax-free first slab (up to ${fmtNpr(firstSlab)}), so you owe no income tax${ssf ? '' : ' — only the 1% social security tax, which SSF enrolment waives'}. Focus on growing your earning potential.`;
             }
-            if (income < 1000000) {
+            if (income < firstSlab + 500000) {
                 if (!ssf) {
                     return 'Consider enrolling in the Social Security Fund (SSF) to waive the 1% social security tax. Pair this with life and health insurance premium deductions for further savings.';
                 }
-                return 'Your SSF enrolment is already saving you money. Consider claiming life and health insurance premium deductions to further reduce your tax liability.';
+                return 'Your SSF enrolment is already saving you money. Consider claiming life and health insurance premium deductions, and contributing to the CIT, to further reduce your tax liability.';
             }
-            if (income < 2000000) {
-                if (maritalStatus === 'individual' && income > 1000000) {
-                    return 'Couples filing jointly get a 0% slab of NPR 600,000 instead of NPR 500,000. Where applicable, joint filing may yield meaningful savings over your current arrangement.';
+            if (income < 2500000) {
+                if (fy === '2082-83' && maritalStatus === 'individual' && income > 1000000) {
+                    return 'For FY 2082-83, couples filing jointly get a 0% slab of NPR 600,000 instead of NPR 500,000. Where applicable, joint filing may yield meaningful savings.';
                 }
-                return 'You are in the upper-middle bracket. Maximize every available deduction — insurance premiums, retirement contributions, and allowances — to keep your effective rate down.';
+                return 'You are in the upper-middle bracket. Maximize every available deduction — CIT contributions, insurance premiums, and allowances — to keep your effective rate down.';
             }
-            return 'At this income level, consider comprehensive planning with a tax professional. Explore tax-advantaged instruments and treat planning as an ongoing practice rather than an annual task.';
+            return 'At this income level, consider comprehensive planning with a tax professional. Maximize CIT and insurance deductions, explore tax-advantaged instruments, and treat planning as an ongoing practice.';
         }
 
-        // Compute income tax (and 1% social security tax) on a given taxable income
-        function computeTax(income, slabs, ssfEnabled) {
-            const ssfTax = ssfEnabled ? 0 : Math.min(slabs.base, income) * 0.01;
-            let remaining = income;
-            let tax = 0;
+        // Tax slabs by fiscal year. Each bracket is { upTo (cumulative ceiling), rate% }.
+        // The first bracket (rate 0) is the tax-free band that still carries the 1% social
+        // security tax (waived for SSF participants).
+        const RATES = {
+            '2082-83': {
+                label: 'FY 2082-83',
+                individual: [
+                    { upTo: 500000, rate: 0 }, { upTo: 700000, rate: 10 }, { upTo: 1000000, rate: 20 },
+                    { upTo: 2000000, rate: 30 }, { upTo: 4000000, rate: 36 }, { upTo: Infinity, rate: 39 },
+                ],
+                couple: [
+                    { upTo: 600000, rate: 0 }, { upTo: 800000, rate: 10 }, { upTo: 1100000, rate: 20 },
+                    { upTo: 2000000, rate: 30 }, { upTo: 4000000, rate: 36 }, { upTo: Infinity, rate: 39 },
+                ],
+            },
+            '2083-84': {
+                label: 'FY 2083-84',
+                // Budget 2083/84: five brackets; couple structure = individual.
+                individual: [
+                    { upTo: 1000000, rate: 0 }, { upTo: 1500000, rate: 10 }, { upTo: 2500000, rate: 20 },
+                    { upTo: 4000000, rate: 27 }, { upTo: Infinity, rate: 29 },
+                ],
+                couple: [
+                    { upTo: 1000000, rate: 0 }, { upTo: 1500000, rate: 10 }, { upTo: 2500000, rate: 20 },
+                    { upTo: 4000000, rate: 27 }, { upTo: Infinity, rate: 29 },
+                ],
+            },
+        };
+        const SLAB_NAMES = ['First Slab', 'Second Slab', 'Third Slab', 'Fourth Slab', 'Fifth Slab', 'Sixth Slab', 'Seventh Slab'];
+
+        function selectedFY() {
+            const el = document.querySelector('input[name="fiscal-year"]:checked');
+            return el ? el.value : '2083-84';
+        }
+        function bracketsFor(year, status) {
+            const y = RATES[year] || RATES['2083-84'];
+            return status === 'couple' ? y.couple : y.individual;
+        }
+
+        // Compute income tax (and 1% social security tax) on a given taxable income for a
+        // bracket set. `brackets` is an ordered list of { upTo, rate } (last upTo = Infinity).
+        function computeTax(income, brackets, ssfEnabled) {
+            const base = brackets[0].upTo;
+            const ssfTax = ssfEnabled ? 0 : Math.min(base, income) * 0.01;
+            let prev = 0, tax = 0;
             const taxBySlabs = [];
-
-            const firstSlabAmount = Math.min(slabs.base, remaining);
-            remaining -= firstSlabAmount;
-            taxBySlabs.push({ name: 'First Slab', rate: 0, capacity: slabs.base, amount: firstSlabAmount, tax: 0 });
-
-            const pushSlab = (name, rate, capacity, multiplier) => {
-                if (remaining > 0) {
-                    const a = Math.min(capacity, remaining);
-                    const t = a * multiplier; tax += t; remaining -= a;
-                    taxBySlabs.push({ name, rate, capacity, amount: a, tax: t });
-                } else {
-                    taxBySlabs.push({ name, rate, capacity, amount: 0, tax: 0 });
-                }
-            };
-            pushSlab('Second Slab', 10, slabs.next1, 0.10);
-            pushSlab('Third Slab',  20, slabs.next2, 0.20);
-            pushSlab('Fourth Slab', 30, slabs.next3, 0.30);
-            pushSlab('Fifth Slab',  36, slabs.next4, 0.36);
-
-            if (remaining > 0) {
-                const t = remaining * 0.39; tax += t;
-                taxBySlabs.push({ name: 'Sixth Slab', rate: 39, capacity: remaining, amount: remaining, tax: t });
-            } else {
-                taxBySlabs.push({ name: 'Sixth Slab', rate: 39, capacity: 0, amount: 0, tax: 0 });
-            }
-
+            brackets.forEach((b, i) => {
+                const amount = Math.max(0, Math.min(income, b.upTo) - prev);
+                const t = amount * (b.rate / 100);
+                tax += t;
+                taxBySlabs.push({ name: SLAB_NAMES[i] || `Slab ${i + 1}`, rate: b.rate, amount, tax: t });
+                prev = b.upTo;
+            });
             return { tax, ssfTax, totalTax: tax + ssfTax, taxBySlabs };
         }
 
         // Tax after deductions (reduce taxable income) and the medical tax credit
         // (applied against income tax: lowest of NPR 1,500, 15% of medical expenses, or tax).
-        function taxAfter(income, deductions, slabs, ssfEnabled, medicalExpenses) {
+        function taxAfter(income, deductions, brackets, ssfEnabled, medicalExpenses) {
             const taxable = Math.max(0, income - Math.max(0, deductions));
-            const r = computeTax(taxable, slabs, ssfEnabled);
+            const r = computeTax(taxable, brackets, ssfEnabled);
             const credit = Math.max(0, Math.min(1500, 0.15 * (medicalExpenses || 0), r.tax));
             return {
                 tax: r.tax,
@@ -1216,6 +1254,7 @@
         // ---- URL state persistence (so a reload keeps your inputs) ----
         function syncUrl() {
             const p = new URLSearchParams();
+            if ($('fy2082').checked) p.set('fy', '2082-83');   // 2083-84 is the default
             if ($('salary').value) p.set('salary', $('salary').value);
             if ($('yearly').checked) p.set('period', 'y');     // monthly is the default
             if ($('couple').checked) p.set('status', 'c');     // individual is the default
@@ -1237,6 +1276,8 @@
             const p = new URLSearchParams(location.search);
             if (![...p.keys()].length) return;
 
+            if (p.get('fy') === '2082-83') $('fy2082').checked = true; else $('fy2083').checked = true;
+            updateFyLabels();
             if (p.has('salary')) $('salary').value = p.get('salary');
             if (p.get('period') === 'y') $('yearly').checked = true; else $('monthly').checked = true;
             if (p.get('status') === 'c') $('couple').checked = true; else $('individual').checked = true;
@@ -1258,6 +1299,29 @@
             if (parseFloat($('salary').value) > 0) { suppressScroll = true; $('calculate').click(); }
         }
 
+        // Sync the year labels (app-bar pill, hero, calc note) with the selected fiscal year,
+        // and show Filing Status only for FY 2082-83 (FY 2083-84 has no separate couple slabs).
+        function updateFyLabels() {
+            const fy = selectedFY();
+            const disp = 'FY ' + fy.replace('-', '–');   // e.g. "FY 2083–84"
+            $('fyPill').textContent = disp;
+            $('heroFy').textContent = 'Fiscal Year ' + fy.replace('-', '–');
+            $('heroFyStrong').textContent = disp + ' tax slabs';
+            $('calcNoteFy').textContent = disp;
+
+            const hasCouple = fy === '2082-83';
+            $('filingField').style.display = hasCouple ? '' : 'none';
+            $('ssfField').style.gridColumn = hasCouple ? '' : '1 / -1'; // SSF spans full width when Filing is hidden
+            if (!hasCouple) $('individual').checked = true;             // no couple concept for 2083-84
+        }
+        document.querySelectorAll('input[name="fiscal-year"]').forEach((r) =>
+            r.addEventListener('change', () => {
+                updateFyLabels();
+                syncUrl();
+                if (parseFloat($('salary').value) > 0) { suppressScroll = true; $('calculate').click(); }
+            }));
+        updateFyLabels();
+
         // Keep the URL in sync as the form changes
         ['salary', 'citAmount', 'lifePremium', 'healthPremium', 'medicalExpenses']
             .forEach((id) => $(id).addEventListener('input', syncUrl));
@@ -1272,6 +1336,13 @@
       "@context": "https://schema.org",
       "@type": "FAQPage",
       "mainEntity": [{
+        "@type": "Question",
+        "name": "What are the income tax slabs in Nepal for FY 2083-84?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For FY 2083-84 (budget unveiled May 2026), the first NPR 1,000,000 is taxed at 1% (for Social Security Tax only), the next NPR 500,000 (1,000,001–1,500,000) at 10%, the next NPR 1,000,000 (1,500,001–2,500,000) at 20%, the next NPR 1,500,000 (2,500,001–4,000,000) at 27%, and any amount above NPR 4,000,000 at 29%. The income tax exemption ceiling was raised to NPR 1,000,000 and the top rate lowered to 29%."
+        }
+      }, {
         "@type": "Question",
         "name": "What are the income tax slabs in Nepal for FY 2082-83?",
         "acceptedAnswer": {
