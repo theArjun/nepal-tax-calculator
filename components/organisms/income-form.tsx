@@ -57,33 +57,58 @@ export function IncomeForm({
         <Field
           label={t("f.salary")}
           hint={form.period === "yearly" ? t("f.salaryHintYearly") : t("f.salaryHintMonthly")}
-          col="col-7"
+          col={form.ssf ? "col-6" : "col-12"}
         >
-          <AmountInput
-            id="salary"
-            value={form.salary}
-            onChange={(v) => setField("salary", v)}
-            currencyLabel={t("cur")}
-            ariaLabel="Salary amount in NPR"
-            error={showError}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") calculateNow();
-            }}
-          />
+          <div className="basic-row">
+            <AmountInput
+              id="salary"
+              value={form.salary}
+              onChange={(v) => setField("salary", v)}
+              currencyLabel={t("cur")}
+              ariaLabel="Salary amount in NPR"
+              error={showError}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") calculateNow();
+              }}
+            />
+            <SegmentedControl<Period>
+              name="income-period"
+              ariaLabel="Income period"
+              className="basic-period"
+              value={form.period}
+              onChange={(v) => setField("period", v)}
+              options={[
+                { value: "monthly", label: t("f.monthly") },
+                { value: "yearly", label: t("f.yearly") },
+              ]}
+            />
+          </div>
         </Field>
 
-        <Field label={t("f.period")} hint={t("f.periodHint")} col="col-5">
-          <SegmentedControl<Period>
-            name="income-period"
-            ariaLabel="Income period"
-            value={form.period}
-            onChange={(v) => setField("period", v)}
-            options={[
-              { value: "monthly", label: t("f.monthly") },
-              { value: "yearly", label: t("f.yearly") },
-            ]}
-          />
-        </Field>
+        {form.ssf ? (
+          <Field label={t("f.basic")} hint={t("f.basicHint")} col="col-6">
+            <div className="basic-row">
+              <AmountInput
+                id="basicSalary"
+                value={form.basicSalary}
+                onChange={(v) => setField("basicSalary", v)}
+                currencyLabel={t("cur")}
+                ariaLabel="Basic salary"
+              />
+              <SegmentedControl<Period>
+                name="basic-period"
+                ariaLabel="Basic salary period"
+                className="basic-period"
+                value={form.basicPeriod}
+                onChange={(v) => setField("basicPeriod", v)}
+                options={[
+                  { value: "monthly", label: t("f.monthly") },
+                  { value: "yearly", label: t("f.yearly") },
+                ]}
+              />
+            </div>
+          </Field>
+        ) : null}
 
         {showFiling ? (
           <Field label={t("f.filing")} hint={t("f.filingHint")} col="col-6">
@@ -106,40 +131,13 @@ export function IncomeForm({
           col="col-6"
           style={showFiling ? undefined : { gridColumn: "1 / -1" }}
         >
-          <div className="cit-panel">
-            <SwitchField
-              id="ssf"
-              checked={form.ssf}
-              onChange={(c) => setField("ssf", c)}
-              labelText={t("f.ssfLabel")}
-              stateText={form.ssf ? t("ssf.enrolled") : t("ssf.notEnrolled")}
-            />
-            {form.ssf ? (
-              <div className="cit-controls stacked">
-                <div className="basic-row">
-                  <AmountInput
-                    id="basicSalary"
-                    value={form.basicSalary}
-                    onChange={(v) => setField("basicSalary", v)}
-                    currencyLabel={t("cur")}
-                    ariaLabel="Basic salary"
-                  />
-                  <SegmentedControl<Period>
-                    name="basic-period"
-                    ariaLabel="Basic salary period"
-                    className="basic-period"
-                    value={form.basicPeriod}
-                    onChange={(v) => setField("basicPeriod", v)}
-                    options={[
-                      { value: "monthly", label: t("f.monthly") },
-                      { value: "yearly", label: t("f.yearly") },
-                    ]}
-                  />
-                </div>
-                <span className="hint">{t("f.basicHint")}</span>
-              </div>
-            ) : null}
-          </div>
+          <SwitchField
+            id="ssf"
+            checked={form.ssf}
+            onChange={(c) => setField("ssf", c)}
+            labelText={t("f.ssfLabel")}
+            stateText={form.ssf ? t("ssf.enrolled") : t("ssf.notEnrolled")}
+          />
         </Field>
 
         <Field label={t("f.cit")} hint={t("f.citHint")} col="col-12">

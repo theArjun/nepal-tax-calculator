@@ -26,7 +26,8 @@ export const en = {
   "f.ssf": "Social Security Fund",
   "f.ssfHint": "Waives the 1% social security tax",
   "f.ssfLabel": "SSF Participation",
-  "f.basicHint": "Basic salary · SSF = 11% you + 20% company of this",
+  "f.basic": "Basic Salary",
+  "f.basicHint": "SSF = 11% you + 20% company of this",
   "f.cit": "Citizen Investment Trust (CIT)",
   "f.citHint":
     "Deductible up to ⅓ of income, capped at NPR 300,000 (NPR 500,000 with SSF)",
