@@ -1046,6 +1046,18 @@
     line-height: 1.55;
     color: var(--ink-soft);
   }
+  .reco-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .reco-list li {
+    font-size: 1.02rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
   .tips-cols {
     display: grid;
     grid-template-columns: 1fr 1fr;

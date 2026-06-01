@@ -8,6 +8,7 @@ import { AppBar } from "@/components/organisms/app-bar";
 import { Hero } from "@/components/organisms/hero";
 import { IncomeForm } from "@/components/organisms/income-form";
 import { TaxSummary } from "@/components/organisms/tax-summary";
+import { CashInHand } from "@/components/organisms/cash-in-hand";
 import { BudgetComparison } from "@/components/organisms/budget-comparison";
 import { TaxOptimization } from "@/components/organisms/tax-optimization";
 import { SlabLedger } from "@/components/organisms/slab-ledger";
@@ -61,6 +62,7 @@ function CalculatorInner() {
           {result ? (
             <>
               <TaxSummary result={result} trigger={calcTrigger} />
+              <CashInHand cash={result.cashInHand} />
               <BudgetComparison cmp={result.comparison} />
               <TaxOptimization opt={result.optimization} trigger={calcTrigger} />
               <SlabLedger result={result} />
@@ -70,10 +72,7 @@ function CalculatorInner() {
         </section>
 
         <section className={cn("section insights", result && "is-visible")} id="insights">
-          <TaxInsights
-            recoKey={result?.recommendationKey ?? null}
-            recoVars={result?.recommendationVars}
-          />
+          <TaxInsights recommendations={result?.recommendations ?? null} />
         </section>
 
         <Faq />

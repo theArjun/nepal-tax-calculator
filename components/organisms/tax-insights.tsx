@@ -2,7 +2,7 @@
 
 import { useI18n } from "@/i18n/provider";
 import type { I18nKey } from "@/i18n/en";
-import type { RecommendationKey } from "@/lib/types";
+import type { RecoItem } from "@/lib/types";
 import { Card } from "@/components/ui/card";
 import { SectionHead } from "@/components/molecules/section-head";
 import { Tip } from "@/components/molecules/tip";
@@ -12,11 +12,9 @@ const COL1 = [1, 2, 3, 4, 5];
 const COL2 = [6, 7, 8, 9];
 
 export function TaxInsights({
-  recoKey,
-  recoVars,
+  recommendations,
 }: {
-  recoKey: RecommendationKey | null;
-  recoVars?: Record<string, string>;
+  recommendations: RecoItem[] | null;
 }) {
   const { t } = useI18n();
 
@@ -29,7 +27,15 @@ export function TaxInsights({
             <CheckIcon />
             <span>{t("ins.reco")}</span>
           </div>
-          <p>{recoKey ? t(recoKey, recoVars) : t("ins.recoDefault")}</p>
+          {recommendations && recommendations.length > 0 ? (
+            <ul className="reco-list">
+              {recommendations.map((item, i) => (
+                <li key={i}>{t(item.key as I18nKey, item.vars)}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>{t("ins.recoDefault")}</p>
+          )}
         </div>
 
         <div className="tips-cols">

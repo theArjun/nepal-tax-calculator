@@ -8,7 +8,7 @@ import type {
   FY,
   Lang,
   OptResult,
-  RecommendationKey,
+  RecoItem,
   Status,
   TaxAfterResult,
   SsfContribution,
@@ -151,27 +151,72 @@ export function annualIncome(salary: string, monthly: boolean): number {
   return monthly ? s * 12 : s;
 }
 
-function recommendationFor(
-  income: number,
-  status: Status,
-  ssf: boolean,
-  fy: FY,
+// Personalized recommendations built from the actual result. Only proposes actions that would
+// genuinely help this user — and proposes nothing tax-related when there is no tax to save.
+function buildRecommendations(
+  ctx: {
+    form: FormState;
+    income: number;
+    status: Status;
+    ssf: boolean;
+    fy: FY;
+    firstSlab: number;
+    incomeTax: number; // gross income tax (before SST/credit)
+    ssfTax: number; // 1% social security tax currently applied (0 when enrolled)
+    totalTax: number;
+    lifeDeduction: number;
+    healthDeduction: number;
+    opt: OptResult;
+  },
   lang: Lang,
-): { key: RecommendationKey; vars?: Record<string, string> } {
-  const firstSlab = bracketsFor(fy, "individual")[0].upTo;
-  if (income <= firstSlab) {
-    return { key: "reco.low", vars: { first: fmtNpr(firstSlab, lang) } };
+): RecoItem[] {
+  const r: RecoItem[] = [];
+  const npr = (n: number) => fmtNpr(n, lang);
+
+  // No tax due at all → nothing to optimize, just reassure.
+  if (ctx.totalTax <= 0) {
+    return [{ key: "prec.noTax", vars: { first: npr(ctx.firstSlab) } }];
   }
-  if (income < firstSlab + 500000) {
-    return { key: ssf ? "reco.midSsf" : "reco.midNoSsf" };
+
+  // SSF waives the 1% social security tax (independent of income tax).
+  if (!ctx.ssf && ctx.ssfTax > 0) {
+    r.push({ key: "prec.ssf", vars: { amt: npr(ctx.ssfTax) } });
+  } else if (ctx.ssf && !(parseFloat(ctx.form.basicSalary) || 0)) {
+    r.push({ key: "prec.ssfBasic" });
   }
-  if (income < 2500000) {
-    if (fy === "2082-83" && status === "individual" && income > 1000000) {
-      return { key: "reco.couple" };
+
+  // Income-tax reducers — only meaningful when income tax actually remains.
+  if (ctx.incomeTax > 0) {
+    const opt = ctx.opt;
+    if (opt.maxSaving >= 1) {
+      if (opt.citDeduction <= 0) {
+        r.push({
+          key: "prec.citStart",
+          vars: { amt: npr(opt.deposit), save: npr(opt.maxSaving) },
+        });
+      } else if (opt.maxSaving - opt.currentSaving >= 1) {
+        r.push({
+          key: "prec.citRoom",
+          vars: {
+            amt: npr(Math.max(0, opt.citRoom - opt.citDeduction)),
+            save: npr(opt.maxSaving - opt.currentSaving),
+          },
+        });
+      }
     }
-    return { key: "reco.upper" };
+    const lifeRoom = 40000 - ctx.lifeDeduction;
+    if (lifeRoom > 0) r.push({ key: "prec.life", vars: { amt: npr(lifeRoom) } });
+    const healthRoom = 20000 - ctx.healthDeduction;
+    if (healthRoom > 0) r.push({ key: "prec.health", vars: { amt: npr(healthRoom) } });
+    if ((parseFloat(ctx.form.medicalExpenses) || 0) <= 0) r.push({ key: "prec.medical" });
+    if (ctx.fy === "2082-83" && ctx.status === "individual" && ctx.income > ctx.firstSlab) {
+      r.push({ key: "prec.couple" });
+    }
+    if (ctx.income >= 2500000) r.push({ key: "prec.pro" });
   }
-  return { key: "reco.top" };
+
+  if (r.length === 0) r.push({ key: "prec.allGood" });
+  return r;
 }
 
 // Optimization figures (mirrors the original renderOptimization mapping).
@@ -207,7 +252,8 @@ function buildOptimization(
   const taxable = applied
     ? o.taxableIncome
     : Math.max(0, o.income - o.otherDeductions - o.citCap);
-  const cashYear = o.income - taxWith - deposit - o.ssfEmployee;
+  // Take-home subtracts the full SSF contribution (employee 11% + employer 20%) plus the CIT deposit.
+  const cashYear = o.income - taxWith - deposit - (o.ssfEmployee + o.ssfEmployer);
   const saving = applied ? o.currentSaving : o.maxSaving;
 
   let statusKey: OptResult["statusKey"];
@@ -385,7 +431,34 @@ export function calculate(form: FormState, lang: Lang): CalcResult | null {
   const cmp83 = taxAfter(income, totalDeductions, bracketsFor("2083-84", status), ssf, medicalExpenses);
   const comparison = buildComparison(income, cmp82, cmp83, fy, lang);
 
-  const reco = recommendationFor(income, status, ssf, fy, lang);
+  // Take-home waterfall (annual): the full SSF contribution (11% you + 20% employer, both go to the
+  // fund out of the CTC-inclusive gross) + the CIT you set aside + tax all leave your spendable cash.
+  const cashInHand = {
+    gross: income,
+    ssf: ssfC.total,
+    citContribution: citDeduction,
+    tax: totalTax,
+    cashInHand: income - ssfC.total - citDeduction - totalTax,
+  };
+
+  const firstSlab = bracketsFor(fy, "individual")[0].upTo;
+  const recommendations = buildRecommendations(
+    {
+      form,
+      income,
+      status,
+      ssf,
+      fy,
+      firstSlab,
+      incomeTax: current.tax,
+      ssfTax: current.ssfTax,
+      totalTax,
+      lifeDeduction,
+      healthDeduction,
+      opt: optimization,
+    },
+    lang,
+  );
 
   return {
     income,
@@ -404,7 +477,7 @@ export function calculate(form: FormState, lang: Lang): CalcResult | null {
     effectiveTaxRate,
     optimization,
     comparison,
-    recommendationKey: reco.key,
-    recommendationVars: reco.vars,
+    cashInHand,
+    recommendations,
   };
 }

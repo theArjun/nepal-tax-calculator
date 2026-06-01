@@ -74,8 +74,36 @@ export interface CalcResult {
   effectiveTaxRate: number;
   optimization: OptResult;
   comparison: ComparisonResult;
-  recommendationKey: RecommendationKey;
-  recommendationVars?: Record<string, string>;
+  cashInHand: CashFlow;
+  recommendations: RecoItem[];
+}
+
+/** The take-home waterfall: gross → minus each deduction → cash in hand (annual figures). */
+export interface CashFlow {
+  gross: number;
+  ssf: number; // full SSF contribution (employee 11% + employer 20% = 31% of basic)
+  citContribution: number; // CIT you set aside
+  tax: number; // total tax (income tax − credit + SST)
+  cashInHand: number;
+}
+
+export type RecoKey =
+  | "prec.noTax"
+  | "prec.ssf"
+  | "prec.ssfBasic"
+  | "prec.citStart"
+  | "prec.citRoom"
+  | "prec.life"
+  | "prec.health"
+  | "prec.medical"
+  | "prec.couple"
+  | "prec.pro"
+  | "prec.allGood";
+
+/** A single personalized recommendation: a message key + its interpolation vars. */
+export interface RecoItem {
+  key: RecoKey;
+  vars?: Record<string, string>;
 }
 
 export interface OptResult {
@@ -120,11 +148,3 @@ export interface ComparisonResult {
   bannerKey: "same" | "less" | "more";
   bannerVars: Record<string, string>;
 }
-
-export type RecommendationKey =
-  | "reco.low"
-  | "reco.midSsf"
-  | "reco.midNoSsf"
-  | "reco.couple"
-  | "reco.upper"
-  | "reco.top";

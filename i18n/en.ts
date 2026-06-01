@@ -189,18 +189,35 @@ export const en = {
     "This calculator is for informational purposes only. Always consult a qualified tax professional before filing.",
   "footer.by": "Developed by",
 
-  "reco.low":
-    "Your income is within the tax-free first slab (up to {first}), so you owe no income tax. Focus on growing your earning potential.",
-  "reco.midNoSsf":
-    "Consider enrolling in the Social Security Fund (SSF) to waive the 1% social security tax. Pair this with life and health insurance premium deductions for further savings.",
-  "reco.midSsf":
-    "Your SSF enrolment is already saving you money. Consider life and health insurance premium deductions, and contributing to the CIT, to further reduce your tax.",
-  "reco.couple":
-    "For FY 2082-83, couples filing jointly get a 0% slab of NPR 600,000 instead of NPR 500,000. Where applicable, joint filing may yield meaningful savings.",
-  "reco.upper":
-    "You are in the upper-middle bracket. Maximize every available deduction — CIT contributions, insurance premiums, and allowances — to keep your effective rate down.",
-  "reco.top":
-    "At this income level, consider comprehensive planning with a tax professional. Maximize CIT and insurance deductions, explore tax-advantaged instruments, and treat planning as an ongoing practice.",
+  "cih.title": "Cash in Hand",
+  "cih.meta": "Monthly & yearly",
+  "cih.gross": "Gross salary",
+  "cih.ssf": "SSF contribution (11% you + 20% company)",
+  "cih.cit": "CIT contribution",
+  "cih.tax": "Total tax",
+  "cih.final": "Cash in hand",
+
+  "prec.noTax":
+    "Your income is within the tax-free first slab (up to {first}), so you owe no income tax. No tax-saving steps are needed — focus on growing your earnings.",
+  "prec.ssf":
+    "Enrol in the Social Security Fund (SSF) to waive the 1% social security tax — about {amt} a year.",
+  "prec.ssfBasic":
+    "Add your basic salary above so we can include your SSF contribution (11% you + 20% employer).",
+  "prec.citStart":
+    "Contribute up to {amt} a year to the Citizen Investment Trust (CIT) to save about {save} in tax.",
+  "prec.citRoom":
+    "Deposit {amt} more to the CIT to save about {save} more in tax.",
+  "prec.life":
+    "Claim up to {amt} more of life insurance premium to lower your taxable income.",
+  "prec.health": "Claim up to {amt} more of health insurance premium.",
+  "prec.medical":
+    "Claim the medical tax credit — up to NPR 1,500 (15% of your medical expenses).",
+  "prec.couple":
+    "For FY 2082-83, filing jointly as a couple raises your tax-free slab to NPR 600,000.",
+  "prec.pro":
+    "At this income level, consider comprehensive planning with a tax professional.",
+  "prec.allGood":
+    "You've already applied the major deductions available — your tax looks well optimised.",
 } as const;
 
 export type I18nKey = keyof typeof en;
