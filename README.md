@@ -40,10 +40,35 @@ An interactive web-based tax calculator for calculating income tax in Nepal for 
 
 ## Technical Details
 
-- Built with HTML, CSS, and JavaScript
-- Uses Tailwind CSS for styling
-- Chart.js for data visualization
-- No backend dependencies - runs entirely in the browser
+The app is built with **Next.js (App Router) + TypeScript + Tailwind CSS + shadcn/ui**, organised
+with atomic design, and deployed as a **static export** (`output: 'export'`) to GitHub Pages — so it
+still runs entirely in the browser with no backend.
+
+### Project structure
+
+```
+app/            Next.js layout (SEO metadata + JSON-LD), page, global styles
+components/
+  ui/           shadcn primitives (Button, Card, Badge)
+  atoms/        AnimatedNumber, RateChip, icons
+  molecules/    AmountInput, SegmentedControl, SwitchField, Field, Gauge, Tip, FaqItem, …
+  organisms/    AppBar, Hero, IncomeForm, TaxSummary, BudgetComparison, TaxOptimization,
+                SlabLedger, StrataChart, TaxInsights, Faq, Footer
+lib/            Pure tax math (tax.ts), formatting, URL state, types
+i18n/           Typed EN/नेपाली dictionaries + useI18n provider
+hooks/          useTaxCalculator (form state, URL sync, calculation)
+legacy/         The original single-file build, kept for reference
+```
+
+### Develop
+
+```bash
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # static export to ./out
+```
+
+The original zero-build single-file version is preserved at `legacy/index.html`.
 
 ## License
 
