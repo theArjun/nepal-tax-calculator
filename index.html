@@ -414,11 +414,16 @@
         .opt-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 2rem; align-items: start; }
         .opt-saving { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; color: var(--navy); margin-top: 0.35rem; font-variant-numeric: tabular-nums; }
         .opt-text { margin-top: 0.85rem; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.55; }
-        .opt-stats { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.4rem 1.1rem; }
-        .opt-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.7rem 0; border-bottom: 1px dashed var(--border); font-size: 0.9rem; color: var(--muted); }
-        .opt-row:last-child { border-bottom: none; }
-        .opt-row strong { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-        .opt-row.highlight strong { color: var(--navy); }
+        .opt-stats { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.25rem 1.1rem; }
+        .opt-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .opt-table th { text-align: right; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; color: var(--muted); padding: 0.7rem 0 0.6rem; border-bottom: 1px solid var(--border-strong); white-space: nowrap; }
+        .opt-table th:first-child { text-align: left; }
+        .opt-table th:not(:first-child), .opt-table td.num { padding-left: 0.9rem; }
+        .opt-table td { padding: 0.6rem 0; border-bottom: 1px dashed var(--border); color: var(--muted); }
+        .opt-table tbody:last-child tr:last-child td { border-bottom: none; }
+        .opt-table td.num { text-align: right; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .opt-table tr.highlight td { color: var(--navy); }
+        .opt-table tr.highlight td.num { color: var(--navy); font-weight: 700; }
         .opt-note { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.82rem; line-height: 1.6; color: var(--muted); }
         .opt-note strong { color: var(--ink-soft); font-weight: 600; }
         @media (max-width: 900px) { .opt-grid { grid-template-columns: 1fr; gap: 1.25rem; } }
@@ -502,8 +507,10 @@
             .kpi-grid { grid-template-columns: 1fr; gap: 0.85rem; }
             .kpi .k-value { font-size: 1.45rem; }
             .opt-saving { font-size: 2rem; }
-            .opt-stats { padding: 0.2rem 0.9rem; }
-            .opt-row { font-size: 0.85rem; }
+            .opt-stats { padding: 0.1rem 0.9rem; }
+            .opt-table { font-size: 0.82rem; }
+            .opt-table th { font-size: 0.64rem; }
+            .opt-table th:not(:first-child), .opt-table td.num { padding-left: 0.55rem; }
             /* Roomier tap targets + tighter table cells */
             .ledger-table { font-size: 0.84rem; }
             .ledger-table thead th, .ledger-table tbody td, .ledger-table tfoot td { padding-left: 0.7rem; padding-right: 0.7rem; }
@@ -792,18 +799,61 @@
                         <p class="opt-text" id="optText" data-i18n="opt.enterSalary">Enter your salary and calculate to see your CIT tax-saving opportunity.</p>
                     </div>
                     <div class="opt-stats">
-                        <div class="opt-row highlight"><span data-i18n="opt.recContrib">Recommended contribution</span><strong id="optMaxContrib">NPR 0</strong></div>
-                        <div id="optSsfBreakdown" hidden>
-                            <div class="opt-row"><span data-i18n="opt.ssfYouPay">SSF &middot; you pay (11%)</span><strong id="optSsfYou">NPR 0</strong></div>
-                            <div class="opt-row"><span data-i18n="opt.ssfCompanyPays">SSF &middot; company pays (20%)</span><strong id="optSsfCompany">NPR 0</strong></div>
-                        </div>
-                        <div class="opt-row"><span id="optDepositYearLabel" data-i18n="opt.depositYear">CIT deposit &middot; per year</span><strong id="optDepositYear">NPR 0</strong></div>
-                        <div class="opt-row"><span id="optDepositMonthLabel" data-i18n="opt.depositMonth">CIT deposit &middot; per month</span><strong id="optDepositMonth">NPR 0</strong></div>
-                        <div class="opt-row"><span data-i18n="opt.taxable">Taxable income after CIT</span><strong id="optTaxable">NPR 0</strong></div>
-                        <div class="opt-row"><span data-i18n="opt.without">Tax without CIT</span><strong id="optTaxWithout">NPR 0</strong></div>
-                        <div class="opt-row"><span data-i18n="opt.with">Tax with CIT</span><strong id="optTaxWith">NPR 0</strong></div>
-                        <div class="opt-row"><span data-i18n="opt.takeYear">Take-home &middot; per year</span><strong id="optCashYear">NPR 0</strong></div>
-                        <div class="opt-row"><span data-i18n="opt.takeMonth">Take-home &middot; per month</span><strong id="optCashMonth">NPR 0</strong></div>
+                        <table class="opt-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="opt.item">Item</th>
+                                    <th data-i18n="opt.perYear">Per year</th>
+                                    <th data-i18n="opt.perMonth">Per month</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="highlight">
+                                    <td data-i18n="opt.recContrib">Recommended contribution</td>
+                                    <td class="num" id="optMaxContrib">NPR 0</td>
+                                    <td class="num" id="optMaxContribM">NPR 0</td>
+                                </tr>
+                            </tbody>
+                            <tbody id="optSsfBreakdown" hidden>
+                                <tr>
+                                    <td data-i18n="opt.ssfYouPay">SSF &middot; you pay (11%)</td>
+                                    <td class="num" id="optSsfYou">NPR 0</td>
+                                    <td class="num" id="optSsfYouM">NPR 0</td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="opt.ssfCompanyPays">SSF &middot; company pays (20%)</td>
+                                    <td class="num" id="optSsfCompany">NPR 0</td>
+                                    <td class="num" id="optSsfCompanyM">NPR 0</td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td id="optDepositLabel" data-i18n="opt.deposit">CIT deposit</td>
+                                    <td class="num" id="optDepositYear">NPR 0</td>
+                                    <td class="num" id="optDepositMonth">NPR 0</td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="opt.taxable">Taxable income after CIT</td>
+                                    <td class="num" id="optTaxable">NPR 0</td>
+                                    <td class="num" id="optTaxableM">NPR 0</td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="opt.without">Tax without CIT</td>
+                                    <td class="num" id="optTaxWithout">NPR 0</td>
+                                    <td class="num" id="optTaxWithoutM">NPR 0</td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="opt.with">Tax with CIT</td>
+                                    <td class="num" id="optTaxWith">NPR 0</td>
+                                    <td class="num" id="optTaxWithM">NPR 0</td>
+                                </tr>
+                                <tr class="highlight">
+                                    <td data-i18n="opt.take">Take-home</td>
+                                    <td class="num" id="optCashYear">NPR 0</td>
+                                    <td class="num" id="optCashMonth">NPR 0</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <p class="opt-note" data-i18n-html="opt.note">
@@ -1051,10 +1101,11 @@
             'r.breakdown': 'कर विवरण', 'r.incomeTax': 'आयकर', 'r.ssfTax': 'सामाजिक सुरक्षा कर', 'r.medCredit': 'चिकित्सा कर क्रेडिट',
             'cmp.title': 'बजेट तुलना', 'cmp.net': 'खुद वार्षिक आय', 'cmp.rate': 'प्रभावकारी कर दर', 'cmp.selected': 'रोजिएको',
             'opt.title': 'कर अनुकूलन — नागरिक लगानी कोष',
-            'opt.recContrib': 'सिफारिस गरिएको योगदान', 'opt.depositYear': 'CIT जम्मा · वार्षिक', 'opt.depositMonth': 'CIT जम्मा · मासिक',
+            'opt.item': 'विवरण', 'opt.perYear': 'वार्षिक', 'opt.perMonth': 'मासिक',
+            'opt.recContrib': 'सिफारिस गरिएको योगदान',
             'opt.ssfYouPay': 'SSF · तपाईंले तिर्ने (११%)', 'opt.ssfCompanyPays': 'SSF · कम्पनीले तिर्ने (२०%)',
             'opt.taxable': 'CIT पछि करयोग्य आय', 'opt.without': 'CIT बिना कर', 'opt.with': 'CIT सहित कर',
-            'opt.takeYear': 'हातमा · वार्षिक', 'opt.takeMonth': 'हातमा · मासिक',
+            'opt.take': 'हातमा',
             'opt.note': '<strong>कट्टी सीमा कसरी काम गर्छ:</strong> स्वीकृत निवृत्ति कोष — CIT, SSF, र सञ्चय/उपदान कोष — को कट्टी संयुक्त रूपमा गणना हुन्छ। कट्टी रकम निर्धारणयोग्य आयको एक-तिहाइ, तपाईंको वास्तविक योगदान, वा वार्षिक <strong>रु ३,००,०००</strong> — यीमध्ये सबैभन्दा कम हुन्छ। सामाजिक सुरक्षा कोष (SSF) सहभागीलाई <strong>रु ५,००,०००</strong> को उच्च सीमा हुन्छ। यी दुई सीमा एकैसाथ जोड्न मिल्दैन।',
             'led.title': 'खुड्किला अनुसार विवरण', 'led.print': 'प्रिन्ट / PDF सेभ', 'led.rate': 'दर', 'led.slab': 'कर खुड्किलो',
             'led.amount': 'करयोग्य रकम', 'led.tax': 'कर', 'led.total': 'कुल तिर्नुपर्ने कर',
@@ -1091,8 +1142,8 @@
         };
         const MSG = {
             'hero.fyPrefix': { en: 'Fiscal Year', ne: 'आर्थिक वर्ष' },
-            'opt.citTopupYear': { en: 'CIT top-up · per year', ne: 'CIT थप जम्मा · वार्षिक' },
-            'opt.citTopupMonth': { en: 'CIT top-up · per month', ne: 'CIT थप जम्मा · मासिक' },
+            'opt.deposit': { en: 'CIT deposit', ne: 'CIT जम्मा' },
+            'opt.citTopup': { en: 'CIT top-up', ne: 'CIT थप जम्मा' },
             'r.onIncome': { en: 'on income of {amt}', ne: '{amt} आयमा' },
             'led.credit': { en: 'Credit', ne: 'क्रेडिट' },
             'slab.0': { en: 'First Slab', ne: 'पहिलो खुड्किलो' },
@@ -1547,22 +1598,27 @@
             const cashYear = (o.income - taxWith) - deposit - (o.ssfEmployee || 0);
             const saving = applied ? o.currentSaving : o.maxSaving;
 
-            // SSF you-pay / company-pays breakdown of the shared ceiling
+            // SSF you-pay / company-pays breakdown of the shared ceiling (per year + per month)
             $('optSsfBreakdown').hidden = !ssfActive;
             if (ssfActive) {
                 $('optSsfYou').textContent = fmtNpr(o.ssfEmployee);
+                $('optSsfYouM').textContent = fmtNpr(o.ssfEmployee / 12);
                 $('optSsfCompany').textContent = fmtNpr(o.ssfEmployer);
+                $('optSsfCompanyM').textContent = fmtNpr(o.ssfEmployer / 12);
             }
-            // When SSF fills part of the ceiling, the CIT rows are a top-up, not the whole deposit
-            $('optDepositYearLabel').textContent = t(ssfActive ? 'opt.citTopupYear' : 'opt.depositYear');
-            $('optDepositMonthLabel').textContent = t(ssfActive ? 'opt.citTopupMonth' : 'opt.depositMonth');
+            // When SSF fills part of the ceiling, the CIT row is a top-up, not the whole deposit
+            $('optDepositLabel').textContent = t(ssfActive ? 'opt.citTopup' : 'opt.deposit');
 
             $('optMaxContrib').textContent = fmtNpr(o.citCap);
+            $('optMaxContribM').textContent = fmtNpr(o.citCap / 12);
             $('optDepositYear').textContent = fmtNpr(deposit);
             $('optDepositMonth').textContent = fmtNpr(deposit / 12);
             $('optTaxable').textContent = fmtNpr(taxable);
+            $('optTaxableM').textContent = fmtNpr(taxable / 12);
             $('optTaxWithout').textContent = fmtNpr(o.baselineTax);
+            $('optTaxWithoutM').textContent = fmtNpr(o.baselineTax / 12);
             $('optTaxWith').textContent = fmtNpr(taxWith);
+            $('optTaxWithM').textContent = fmtNpr(taxWith / 12);
             $('optCashYear').textContent = fmtNpr(cashYear);
             $('optCashMonth').textContent = fmtNpr(cashYear / 12);
             countUp($('optSaving'), saving);
